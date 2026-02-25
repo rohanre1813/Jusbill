@@ -74,6 +74,7 @@ export const createInvoice = async (req, res) => {
 
     try {
       await clearCache(`invoices:${req.user.shopId}`);
+      await clearCache(`products:${req.user.shopId}`);
     } catch (redisError) {
       console.error("Redis Clear Error (createInvoice):", redisError.message);
     }

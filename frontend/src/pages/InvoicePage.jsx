@@ -154,6 +154,8 @@ export default function InvoicePage() {
   const [showResults, setShowResults] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
 
   useEffect(() => {
     loadProducts();
@@ -304,6 +306,38 @@ export default function InvoicePage() {
     companyIfscCode: userProfile?.ifscCode
   });
 
+  const handleConfirmAction = async () => {
+    setShowConfirm(false);
+    if (!pendingAction) return;
+
+    if (pendingAction.type === "save") {
+      await submit();
+    } else if (pendingAction.type === "send") {
+      const toastId = toast.loading("Processing...");
+      try {
+        const invoiceData = getInvoiceData();
+        const savedInvoice = await submit();
+        if (!savedInvoice) {
+          toast.error("Failed to save invoice", { id: toastId });
+          return;
+        }
+        invoiceData.invoiceId = savedInvoice.invoiceId;
+        const pdfBase64 = await generateInvoicePDF(invoiceData, "base64");
+        const base64Data = pdfBase64.split(',')[1];
+        await sendInvoiceEmail({
+          email: selectedCustomer.email,
+          customerName: invoiceData.customerName,
+          invoiceId: savedInvoice.invoiceId,
+          pdfBuffer: base64Data
+        });
+        toast.success(`Invoice sent to ${selectedCustomer.email}`, { id: toastId });
+      } catch (error) {
+        toast.error("Failed to send email", { id: toastId });
+      }
+    }
+    setPendingAction(null);
+  };
+
   return (
     <div className="space-y-6 max-w-full overflow-x-hidden">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -361,29 +395,10 @@ export default function InvoicePage() {
           </button>
 
           <button
-            onClick={async () => {
+            onClick={() => {
               if (!customer || rows.length === 0) return toast.error("Please select a customer and add items");
-              const toastId = toast.loading("Processing...");
-              try {
-                const invoiceData = getInvoiceData();
-                const savedInvoice = await submit();
-                if (!savedInvoice) {
-                  toast.error("Failed to save invoice", { id: toastId });
-                  return;
-                }
-                invoiceData.invoiceId = savedInvoice.invoiceId;
-                const pdfBase64 = await generateInvoicePDF(invoiceData, "base64");
-                const base64Data = pdfBase64.split(',')[1];
-                await sendInvoiceEmail({
-                  email: selectedCustomer.email,
-                  customerName: invoiceData.customerName,
-                  invoiceId: savedInvoice.invoiceId,
-                  pdfBuffer: base64Data
-                });
-                toast.success(`Invoice sent to ${selectedCustomer.email}`, { id: toastId });
-              } catch (error) {
-                toast.error("Failed to send email", { id: toastId });
-              }
+              setPendingAction({ type: "send" });
+              setShowConfirm(true);
             }}
             disabled={!customer || rows.length === 0 || !selectedCustomer?.email}
             className="col-span-2 md:col-span-1 flex items-center justify-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-lg transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -394,7 +409,11 @@ export default function InvoicePage() {
           </button>
 
           <button
-            onClick={submit}
+            onClick={() => {
+              if (!customer || rows.length === 0) return toast.error("Please select a customer and add items");
+              setPendingAction({ type: "save" });
+              setShowConfirm(true);
+            }}
             disabled={!customer || rows.length === 0}
             className="col-span-2 md:col-span-1 flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -606,6 +625,49 @@ export default function InvoicePage() {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showConfirm && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-sm w-full"
+            >
+              <div className="flex items-center gap-3 text-amber-500 mb-4">
+                <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                  <FileText size={24} />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Confirm Invoice</h3>
+              </div>
+
+              <p className="text-gray-600 dark:text-gray-400 mb-6 font-medium">
+                Are you sure you want to {pendingAction?.type === 'send' ? 'save and send' : 'save'} this invoice?
+                <span className="block mt-2 text-sm text-red-500 font-bold">⚠️ Changes cannot be undone once saved.</span>
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowConfirm(false);
+                    setPendingAction(null);
+                  }}
+                  className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl font-medium transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmAction}
+                  className="flex-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/30 transition-all active:scale-95"
+                >
+                  Confirm
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -32,6 +32,7 @@ export const createPurchase = async (req, res) => {
     await purchase.save();
     try {
       await clearCache(`purchases:${req.user.shopId}`);
+      await clearCache(`products:${req.user.shopId}`);
     } catch (redisError) {
       console.error("Redis Clear Error (createPurchase):", redisError.message);
     }
@@ -85,6 +86,7 @@ export const deletePurchase = async (req, res) => {
     await Purchase.findByIdAndDelete(id);
     try {
       await clearCache(`purchases:${req.user.shopId}`);
+      await clearCache(`products:${req.user.shopId}`);
     } catch (redisError) {
       console.error("Redis Clear Error (deletePurchase):", redisError.message);
     }
