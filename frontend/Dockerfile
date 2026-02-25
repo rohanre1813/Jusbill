@@ -18,7 +18,6 @@ COPY . .
 
 EXPOSE 5173
 
-# Run Vite dev server, binding to all interfaces so Docker can expose it
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
 # ─────────────────────────────────────────────
@@ -30,8 +29,9 @@ RUN npm install
 
 COPY . .
 
-# Declare the build-time arg so Vite can bake it into the bundle
-ARG VITE_API_URL
+# Vite bakes VITE_API_URL at build time — set to /api so all
+# requests go through the Nginx proxy (same origin = cookies work!)
+ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
 
 RUN npm run build
@@ -41,22 +41,15 @@ RUN npm run build
 # ─────────────────────────────────────────────
 FROM nginx:stable-alpine AS production
 
-# Remove default nginx page
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Nginx config to support React Router (SPA fallback)
-RUN printf 'server {\n\
-    listen 80;\n\
-    root /usr/share/nginx/html;\n\
-    index index.html;\n\
-    location / {\n\
-        try_files $uri $uri/ /index.html;\n\
-    }\n\
-}\n' > /etc/nginx/conf.d/default.conf
+# Copy the Nginx config template
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
 EXPOSE 80
 
+# Nginx's built-in template processing will call envsubst automatically
+# for any files in /etc/nginx/templates/
 CMD ["nginx", "-g", "daemon off;"]
