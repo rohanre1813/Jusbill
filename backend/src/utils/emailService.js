@@ -3,31 +3,49 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-console.log("Email Config - User:", process.env.EMAIL_USER);
-console.log("Email Config - Pass (prefix):", process.env.EMAIL_PASS ? (process.env.EMAIL_PASS.substring(0, 3) + "****") : "MISSING");
+const EMAIL_USER = (process.env.EMAIL_USER || "").trim();
+const EMAIL_PASS = (process.env.EMAIL_PASS || "").trim();
+
+console.log("Email Config - User:", EMAIL_USER);
+console.log("Email Config - Pass (prefix):", EMAIL_PASS ? (EMAIL_PASS.substring(0, 3) + "****") : "MISSING");
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 587,
-  secure: false, // true for 465, false for other ports
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    user: EMAIL_USER,
+    pass: EMAIL_PASS
   },
-  connectionTimeout: 10000, // 10s
+  tls: {
+    rejectUnauthorized: false,
+    minVersion: 'TLSv1.2'
+  },
+  connectionTimeout: 10000,
   greetingTimeout: 10000,
-  socketTimeout: 30000,
-  debug: true, // show debug output
-  logger: true // log to console
+  socketTimeout: 20000,
+  debug: true,
+  logger: true
 });
 
 console.log("Verifying Mail Transporter...");
+const verifyTimeout = setTimeout(() => {
+  console.error("⚠️ Transporter verification is taking too long (15s)... possible network block.");
+}, 15000);
+
 transporter.verify(function (error, success) {
+  clearTimeout(verifyTimeout);
   if (error) {
     console.error("❌ Transporter Verification Error:", error);
   } else {
     console.log("✅ Mail Transporter Ready");
   }
+});
+if (error) {
+  console.error("❌ Transporter Verification Error:", error);
+} else {
+  console.log("✅ Mail Transporter Ready");
+}
 });
 
 export const sendEmailWithAttachment = async (to, subject, text, attachmentBuffer, filename) => {
