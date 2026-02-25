@@ -1,62 +1,49 @@
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const EMAIL_USER = (process.env.EMAIL_USER || "").trim();
-const EMAIL_PASS = (process.env.EMAIL_PASS || "").trim();
-
-console.log("Email Config - User:", EMAIL_USER);
-console.log("Email Config - Pass (prefix):", EMAIL_PASS ? (EMAIL_PASS.substring(0, 3) + "****") : "MISSING");
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS
-  },
-  tls: {
-    rejectUnauthorized: false, // Bypass SSL certificate issues on some cloud providers
-    minVersion: 'TLSv1.2'
-  },
-  family: 4, // Force IPv4 to avoid IPv6 timeout issues seen in logs
-  connectionTimeout: 30000, // 30 seconds
-  greetingTimeout: 30000,
-  socketTimeout: 60000,
-  debug: true,
-  logger: true
-});
-
-console.log("Verifying Mail Transporter...");
-const verifyTimeout = setTimeout(() => {
-  console.error("⚠️ Transporter verification is taking too long (15s)... possible network block.");
-}, 15000);
-
-transporter.verify(function (error, success) {
-  clearTimeout(verifyTimeout);
-  if (error) {
-    console.error("❌ Transporter Verification Error:", error);
-  } else {
-    console.log("✅ Mail Transporter Ready");
-  }
-});
+const RESEND_API_KEY = (process.env.RESEND_API_KEY || "").trim();
 
 export const sendEmailWithAttachment = async (to, subject, text, attachmentBuffer, filename) => {
   try {
-    console.log(`Sending email to ${to} with attachment ${filename}...`);
-    const mailOptions = {
-      from: `"JusBill" <${EMAIL_USER}>`,
-      to, subject, text,
-      attachments: [{ filename, content: attachmentBuffer }]
-    };
+    if (!RESEND_API_KEY) {
+      console.error("❌ RESEND_API_KEY is missing. Email skipped.");
+      return;
+    }
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email info messageId:", info.messageId);
-    return info;
+    console.log(`Sending email to ${to} via Resend...`);
+
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'JusBill <onboarding@resend.dev>',
+        to: [to],
+        subject: subject,
+        text: text,
+        attachments: [
+          {
+            filename: filename,
+            content: attachmentBuffer.toString('base64'),
+          }
+        ]
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to send email via Resend");
+    }
+
+    console.log("✅ Email sent successfully via Resend:", data.id);
+    return data;
   } catch (error) {
-    console.error('❌ Error sending email:', error);
-    throw error;
+    console.error('❌ Resend Email Error:', error.message);
+    // We don't throw here to keep it "background" as requested, 
+    // but the controller will handle its own try/catch if needed.
   }
 };

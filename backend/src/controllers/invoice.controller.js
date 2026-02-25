@@ -195,13 +195,11 @@ export const sendInvoiceEmail = async (req, res) => {
     const buffer = Buffer.from(pdfBuffer, 'base64');
     const filenamePrefix = type === "Reminder" ? "Invoice" : type;
 
-    try {
-      await sendEmailWithAttachment(email, subject, text, buffer, `${filenamePrefix}_${invoiceId || "Draft"}.pdf`);
-      res.status(200).json({ message: "Email sent successfully" });
-    } catch (err) {
-      console.error("Single email send failed:", err);
-      res.status(500).json({ message: "Failed to send email", error: err.message });
-    }
+    // Send in background
+    sendEmailWithAttachment(email, subject, text, buffer, `${filenamePrefix}_${invoiceId || "Draft"}.pdf`)
+      .catch(err => console.error("Background Email Error:", err));
+
+    res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     res.status(500).json({ message: "Failed to send email", error: error.message });
   }
@@ -221,7 +219,6 @@ export const sendSalesReport = async (req, res) => {
     }
 
     const reportInvoices = await Invoice.find(query).sort({ createdAt: -1 });
-    console.log(`Found ${reportInvoices.length} invoices for report.`);
 
     let totalSales = 0, totalPaid = 0, totalUnpaid = 0;
     for (const inv of reportInvoices) {
@@ -273,23 +270,17 @@ export const sendSalesReport = async (req, res) => {
       doc.font("Helvetica-Bold").text(`Total: Rs.${totalSales.toLocaleString("en-IN")}`, { align: "right" });
       doc.end();
     });
-    console.log("PDF Report Generated. Size:", pdfBuffer.length);
 
-    console.log("Initiating email send to:", req.user.email);
-    try {
-      await sendEmailWithAttachment(
-        req.user.email,
-        `Sales Report (${periodLabel})`,
-        `Attached is your sales report for the period: ${periodLabel}.`,
-        pdfBuffer,
-        `Sales_Report_${fromDate || 'All'}_to_${toDate || 'Time'}.pdf`
-      );
-      console.log("Sales report email sent successfully!");
-      res.json({ message: "Report generated successfully" });
-    } catch (err) {
-      console.error("Sales report email failed:", err);
-      res.status(500).json({ message: "Failed to send email", error: err.message });
-    }
+    // Send in background
+    sendEmailWithAttachment(
+      req.user.email,
+      `Sales Report (${periodLabel})`,
+      `Attached is your sales report for the period: ${periodLabel}.`,
+      pdfBuffer,
+      `Sales_Report_${fromDate || 'All'}_to_${toDate || 'Time'}.pdf`
+    ).catch(err => console.error("Background Report Email Error:", err));
+
+    res.json({ message: "Report generated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Failed to send report", error: error.message });
   }

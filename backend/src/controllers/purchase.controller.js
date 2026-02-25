@@ -159,23 +159,17 @@ export const sendPurchaseReport = async (req, res) => {
       doc.font("Helvetica-Bold").text(`Total Expense: Rs.${totalExpenses.toLocaleString("en-IN")}`, { align: "right" });
       doc.end();
     });
-    console.log("PDF Purchase Report Generated. Size:", pdfBuffer.length);
 
-    console.log("Initiating purchase report email send to:", req.user.email);
-    try {
-      await sendEmailWithAttachment(
-        req.user.email,
-        `Purchase Report (${periodLabel})`,
-        `Attached is your purchase report for the period: ${periodLabel}.`,
-        pdfBuffer,
-        `Purchase_Report_${fromDate || 'All'}_to_${toDate || 'Time'}.pdf`
-      );
-      console.log("Purchase report email sent successfully!");
-      res.json({ message: "Report generated successfully" });
-    } catch (err) {
-      console.error("Purchase report email failed:", err);
-      res.status(500).json({ message: "Failed to send email", error: err.message });
-    }
+    // Send in background
+    sendEmailWithAttachment(
+      req.user.email,
+      `Purchase Report (${periodLabel})`,
+      `Attached is your purchase report for the period: ${periodLabel}.`,
+      pdfBuffer,
+      `Purchase_Report_${fromDate || 'All'}_to_${toDate || 'Time'}.pdf`
+    ).catch(err => console.error("Background Purchase Email Error:", err));
+
+    res.json({ message: "Report generated successfully" });
   } catch (error) {
     console.error("Send Report Error:", error);
     res.status(500).json({ message: "Failed to process request", error: error.message });

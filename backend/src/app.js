@@ -41,38 +41,11 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-app.get("/health/redis", async (req, res) => {
-  try {
-    const { redis } = await import("./config/redis.js");
-    const result = await redis.ping();
-    res.json({ status: "ok", redis: result });
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
-  }
-});
-
 app.use("/auth", authRoutes);
 app.use("/products", productRoutes);
 app.use("/invoice", invoiceRoutes);
 app.use("/customers", customerRoutes);
 app.use("/users", userRoutes);
 app.use("/purchases", purchaseRoutes);
-
-// Email Diagnostic Route
-app.get("/test-email", async (req, res) => {
-  try {
-    const { sendEmailWithAttachment } = await import("./utils/emailService.js");
-    await sendEmailWithAttachment(
-      process.env.EMAIL_USER,
-      "Test Connectivity",
-      "If you received this, SMTP is working!",
-      Buffer.from("Test content"),
-      "test.txt"
-    );
-    res.json({ message: "Test email sent successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message, stack: error.stack });
-  }
-});
 
 export default app;
