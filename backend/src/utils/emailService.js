@@ -1,41 +1,50 @@
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const EMAIL_USER = (process.env.EMAIL_USER || "").trim();
-const EMAIL_PASS = (process.env.EMAIL_PASS || "").trim();
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS
-  },
-  family: 4
-});
+const POSTMARK_SERVER_TOKEN = (process.env.POSTMARK_SERVER_TOKEN || "").trim();
+const FROM_EMAIL = (process.env.FROM_EMAIL || "jusbill.contact@gmail.com").trim();
 
 export const sendEmailWithAttachment = async (to, subject, text, attachmentBuffer, filename) => {
   try {
-    if (!EMAIL_USER || !EMAIL_PASS) {
-      console.warn("⚠️ Email credentials missing.");
+    if (!POSTMARK_SERVER_TOKEN) {
+      console.warn("⚠️ POSTMARK_SERVER_TOKEN is missing. Email skipped.");
       return;
     }
 
-    const mailOptions = {
-      from: `"JusBill" <${EMAIL_USER}>`,
-      to,
-      subject,
-      text,
-      attachments: [{ filename, content: attachmentBuffer }]
-    };
+    console.log(`Sending email to ${to} via Postmark...`);
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent:", info.messageId);
-    return info;
+    const response = await fetch('https://api.postmarkapp.com/email', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Postmark-Server-Token': POSTMARK_SERVER_TOKEN
+      },
+      body: JSON.stringify({
+        From: `JusBill <${FROM_EMAIL}>`,
+        To: to,
+        Subject: subject,
+        TextBody: text,
+        Attachments: [
+          {
+            Name: filename,
+            Content: attachmentBuffer.toString('base64'),
+            ContentType: 'application/pdf'
+          }
+        ]
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.Message || "Failed to send email via Postmark");
+    }
+
+    console.log("✅ Email sent successfully via Postmark:", data.MessageID);
+    return data;
   } catch (error) {
-    console.error('❌ Email Error:', error.message);
+    console.error('❌ Postmark Error:', error.message);
   }
 };
