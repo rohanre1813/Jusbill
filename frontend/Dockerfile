@@ -30,6 +30,10 @@ RUN npm install
 
 COPY . .
 
+# Declare the build-time arg so Vite can bake it into the bundle
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 RUN npm run build
 
 # ─────────────────────────────────────────────
