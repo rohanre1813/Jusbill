@@ -51,7 +51,7 @@ export const getProducts = async (req, res) => {
     const products = await Product.find(query).sort({ createdAt: -1 });
 
     try {
-      await redis.set(cacheKey, products, { ex: 3600 });
+      await redis.set(cacheKey, products, { ex: 300 });
       console.log("Redis Cache Miss: products. Cached result.");
     } catch (redisError) {
       console.error("Redis Set Error (products):", redisError.message);

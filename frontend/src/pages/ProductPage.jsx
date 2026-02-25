@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Package, Plus, Layers, Pencil, Trash2, X, Check, Search, IndianRupee, BarChart3, PieChart as PieChartIcon } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Rectangle, Pie, Cell, Legend, PieChart } from 'recharts';
 import toast from "react-hot-toast";
+import { createPortal } from "react-dom";
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c', '#d0ed57', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c'];
 
@@ -50,18 +51,28 @@ export default function ProductPage() {
   }, [dateRange]);
 
   const load = async () => {
-    try {
-      const [prodRes, analyticsRes] = await Promise.all([
-        getProducts(),
-        getTopSellingProducts({ fromDate: dateRange.startDate, toDate: dateRange.endDate })
-      ]);
-      setProducts(prodRes.data);
-      setAnalyticsData(analyticsRes.data);
-    } catch (error) {
-      toast.error("Failed to load data");
-    } finally {
+    // Start fetching everything in parallel
+    const prodPromise = getProducts();
+    const analyticsPromise = getTopSellingProducts({
+      fromDate: dateRange.startDate,
+      toDate: dateRange.endDate
+    });
+
+    // 1. Load products first to make the page interactive
+    prodPromise.then(res => {
+      setProducts(res.data);
       setLoading(false);
-    }
+    }).catch(() => {
+      toast.error("Failed to load products");
+      setLoading(false);
+    });
+
+    // 2. Load analytics in the background
+    analyticsPromise.then(res => {
+      setAnalyticsData(res.data);
+    }).catch(() => {
+      console.warn("Analytics failed to load");
+    });
   };
 
   const handleAdd = async () => {
