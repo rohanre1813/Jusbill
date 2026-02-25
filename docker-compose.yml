@@ -1,0 +1,125 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# JusBill — Docker Compose
+#
+# Usage:
+#   Development:  docker compose --profile dev up --build
+#   Production:   docker compose --profile prod up --build
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: jusbill
+
+# Shared env variables for the backend (used by both profiles)
+x-backend-env: &backend-env
+  PORT: 5000
+  MONGO_URI: ${MONGO_URI}
+  JWT_SECRET: ${JWT_SECRET}
+  CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+  CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+  CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+  EMAIL_USER: ${EMAIL_USER}
+  EMAIL_PASS: ${EMAIL_PASS}
+  UPSTASH_REDIS_REST_URL: ${UPSTASH_REDIS_REST_URL}
+  UPSTASH_REDIS_REST_TOKEN: ${UPSTASH_REDIS_REST_TOKEN}
+  PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+  PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium
+
+services:
+
+  # ────────────────────────────────
+  # BACKEND — Development
+  # ────────────────────────────────
+  backend-dev:
+    profiles: [dev]
+    build:
+      context: ./backend
+      target: development
+    container_name: jusbill-backend-dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      <<: *backend-env
+      NODE_ENV: development
+    volumes:
+      # Hot-reload: mount source, exclude node_modules
+      - ./backend:/app
+      - /app/node_modules
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - app-network
+
+  # ────────────────────────────────
+  # FRONTEND — Development (Vite HMR)
+  # ────────────────────────────────
+  frontend-dev:
+    profiles: [dev]
+    build:
+      context: ./frontend
+      target: development
+    container_name: jusbill-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:5000
+    volumes:
+      # Hot-reload: mount source, exclude node_modules
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      backend-dev:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # ────────────────────────────────
+  # BACKEND — Production
+  # ────────────────────────────────
+  backend-prod:
+    profiles: [prod]
+    build:
+      context: ./backend
+      target: production
+    container_name: jusbill-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      <<: *backend-env
+      NODE_ENV: production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - app-network
+
+  # ────────────────────────────────
+  # FRONTEND — Production (Nginx)
+  # ────────────────────────────────
+  frontend-prod:
+    profiles: [prod]
+    build:
+      context: ./frontend
+      target: production
+    container_name: jusbill-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      backend-prod:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
