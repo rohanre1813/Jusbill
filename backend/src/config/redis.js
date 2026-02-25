@@ -5,6 +5,14 @@ dotenv.config();
 
 if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
   console.warn("⚠️ Redis credentials missing. Caching disabled.");
+} else {
+  // Simple ping test
+  new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  }).ping()
+    .then(res => console.log("✅ Redis connected (Ping:", res, ")"))
+    .catch(err => console.error("❌ Redis connection failed:", err.message));
 }
 
 export const redis = new Redis({

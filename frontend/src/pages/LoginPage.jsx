@@ -29,7 +29,7 @@ export default function LoginPage() {
       toast.success("Welcome back!");
       navigate("/");
     } catch (error) {
-      toast.error(error.response?.data || "Login failed");
+      toast.error(error.response?.data?.msg || "Login failed");
     }
   };
 

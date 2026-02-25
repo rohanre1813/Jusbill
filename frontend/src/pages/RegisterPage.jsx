@@ -16,13 +16,15 @@ const passwordRules = [
 export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", mobile: "", companyName: "" });
   const [errors, setErrors] = useState({});
   const [passwordFocused, setPasswordFocused] = useState(false);
 
   const validate = () => {
     const newErrors = {};
     if (!form.name.trim()) newErrors.name = "Full name is required.";
+    if (!form.companyName.trim()) newErrors.companyName = "Company name is required.";
+    if (!form.mobile.trim()) newErrors.mobile = "Mobile number is required.";
     if (!emailRegex.test(form.email)) newErrors.email = "Please enter a valid email address.";
     if (form.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters.";
@@ -43,7 +45,7 @@ export default function RegisterPage() {
       toast.success("Account created successfully");
       navigate("/");
     } catch (error) {
-      toast.error(error.response?.data || "Registration failed");
+      toast.error(error.response?.data?.msg || "Registration failed");
     }
   };
 
@@ -114,6 +116,46 @@ export default function RegisterPage() {
             {errors.email && (
               <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
                 <span>⚠</span> {errors.email}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Name</label>
+            <div className="relative">
+              <User className="absolute left-3 top-3 text-gray-400" size={20} />
+              <input
+                type="text"
+                required
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.companyName ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-700 focus:ring-indigo-500"} bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`}
+                placeholder="Shop/Company Name"
+                value={form.companyName}
+                onChange={(e) => handleChange("companyName", e.target.value)}
+              />
+            </div>
+            {errors.companyName && (
+              <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+                <span>⚠</span> {errors.companyName}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mobile Number</label>
+            <div className="relative">
+              <User className="absolute left-3 top-3 text-gray-400" size={20} />
+              <input
+                type="text"
+                required
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.mobile ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-700 focus:ring-indigo-500"} bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 outline-none transition-all`}
+                placeholder="Mobile Number"
+                value={form.mobile}
+                onChange={(e) => handleChange("mobile", e.target.value)}
+              />
+            </div>
+            {errors.mobile && (
+              <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+                <span>⚠</span> {errors.mobile}
               </p>
             )}
           </div>

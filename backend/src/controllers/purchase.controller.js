@@ -79,6 +79,7 @@ export const sendPurchaseReport = async (req, res) => {
     }
 
     const reportPurchases = await Purchase.find(query).sort({ createdAt: -1 });
+    console.log(`Found ${reportPurchases.length} purchases for report.`);
 
     if (reportPurchases.length === 0) {
       return res.status(400).json({ message: "No purchases found in this date range" });
@@ -128,14 +129,17 @@ export const sendPurchaseReport = async (req, res) => {
       doc.font("Helvetica-Bold").text(`Total Expense: Rs.${totalExpenses.toLocaleString("en-IN")}`, { align: "right" });
       doc.end();
     });
+    console.log("PDF Purchase Report Generated. Size:", pdfBuffer.length);
 
+    console.log("Initiating purchase report email send to:", req.user.email);
     sendEmailWithAttachment(
       req.user.email,
       `Purchase Report (${periodLabel})`,
       `Attached is your purchase report for the period: ${periodLabel}.`,
       pdfBuffer,
       `Purchase_Report_${fromDate || 'All'}_to_${toDate || 'Time'}.pdf`
-    ).catch(err => console.error("Purchase report email failed:", err));
+    ).then(() => console.log("Purchase report email sent successfully!"))
+      .catch(err => console.error("Purchase report email failed:", err));
 
     res.json({ message: "Report generated successfully" });
   } catch (error) {

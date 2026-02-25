@@ -178,6 +178,7 @@ export const sendSalesReport = async (req, res) => {
     }
 
     const reportInvoices = await Invoice.find(query).sort({ createdAt: -1 });
+    console.log(`Found ${reportInvoices.length} invoices for report.`);
 
     let totalSales = 0, totalPaid = 0, totalUnpaid = 0;
     for (const inv of reportInvoices) {
@@ -229,14 +230,17 @@ export const sendSalesReport = async (req, res) => {
       doc.font("Helvetica-Bold").text(`Total: Rs.${totalSales.toLocaleString("en-IN")}`, { align: "right" });
       doc.end();
     });
+    console.log("PDF Report Generated. Size:", pdfBuffer.length);
 
+    console.log("Initiating email send to:", req.user.email);
     sendEmailWithAttachment(
       req.user.email,
       `Sales Report (${periodLabel})`,
       `Attached is your sales report for the period: ${periodLabel}.`,
       pdfBuffer,
       `Sales_Report_${fromDate || 'All'}_to_${toDate || 'Time'}.pdf`
-    ).catch(err => console.error("Sales report email failed:", err));
+    ).then(() => console.log("Sales report email sent successfully!"))
+      .catch(err => console.error("Sales report email failed:", err));
 
     res.json({ message: "Report generated successfully" });
   } catch (error) {
