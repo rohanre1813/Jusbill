@@ -3,10 +3,12 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/user.js";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "strict",
   maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
 };
 
