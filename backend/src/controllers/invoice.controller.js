@@ -257,6 +257,13 @@ export const sendSalesReport = async (req, res) => {
       doc.font("Helvetica").fontSize(9);
 
       reportInvoices.forEach(inv => {
+        if (doc.y > 650) {
+          doc.addPage();
+          doc.fontSize(9).font("Helvetica-Bold");
+          ["Invoice ID", "Date", "Customer", "Status", "Amount"].forEach((h, i) => doc.text(h, colX[i], doc.y, { continued: i < 4 }));
+          doc.moveDown(0.3);
+          doc.font("Helvetica").fontSize(9);
+        }
         const y = doc.y;
         doc.text(inv.invoiceId, colX[0], y, { continued: false });
         doc.text(new Date(inv.createdAt).toLocaleDateString(), colX[1], y, { continued: false });
