@@ -41,18 +41,12 @@ transporter.verify(function (error, success) {
     console.log("✅ Mail Transporter Ready");
   }
 });
-if (error) {
-  console.error("❌ Transporter Verification Error:", error);
-} else {
-  console.log("✅ Mail Transporter Ready");
-}
-});
 
 export const sendEmailWithAttachment = async (to, subject, text, attachmentBuffer, filename) => {
   try {
     console.log(`Sending email to ${to} with attachment ${filename}...`);
     const mailOptions = {
-      from: `"JusBill" <${process.env.EMAIL_USER}>`,
+      from: `"JusBill" <${EMAIL_USER}>`,
       to, subject, text,
       attachments: [{ filename, content: attachmentBuffer }]
     };
