@@ -3,6 +3,8 @@ import Product from "../models/product.js";
 import Counter from "../models/counter.js";
 import { sendEmailWithAttachment } from "../utils/emailService.js";
 import PDFDocument from "pdfkit";
+import { redis, getKey } from "../config/redis.js";
+import { clearCache } from "../middleware/cache.js";
 
 export const createInvoice = async (req, res) => {
   try {
@@ -70,6 +72,7 @@ export const createInvoice = async (req, res) => {
       grandTotal: subtotalAfterDiscount + gst
     });
 
+    await clearCache(`invoices:${req.user.shopId}`);
     res.status(201).json(invoice);
   } catch (error) {
     res.status(500).json({ message: "Failed to create invoice", error: error.message });
@@ -78,17 +81,26 @@ export const createInvoice = async (req, res) => {
 
 export const getInvoices = async (req, res) => {
   try {
-    const { search } = req.query;
+    const cacheKey = getKey(`invoices:${req.user.shopId}:${search || "all"}`);
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      console.log("Redis Cache Hit: invoices");
+      return res.json(cached);
+    }
+
+    const { search: searchQuery } = req.query;
     const query = { shopId: req.user.shopId, isDeleted: { $ne: true } };
 
-    if (search) {
+    if (searchQuery) {
       query.$or = [
-        { invoiceId: { $regex: search, $options: "i" } },
-        { customerName: { $regex: search, $options: "i" } }
+        { invoiceId: { $regex: searchQuery, $options: "i" } },
+        { customerName: { $regex: searchQuery, $options: "i" } }
       ];
     }
 
     const invoices = await Invoice.find(query).sort({ createdAt: -1 });
+    await redis.set(cacheKey, invoices, { ex: 300 }); // Cache for 5 mins
+    console.log("Redis Cache Miss: invoices. Cached result.");
     res.json(invoices);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch invoices" });
@@ -113,7 +125,7 @@ export const updatePaymentStatus = async (req, res) => {
 
     existingInvoice.paymentStatus = status;
     const invoice = await existingInvoice.save();
-
+    await clearCache(`invoices:${req.user.shopId}`);
     res.json(invoice);
   } catch (error) {
     res.status(500).json({ message: "Failed to update payment status" });
@@ -129,6 +141,7 @@ export const deleteInvoice = async (req, res) => {
     );
 
     if (!invoice) return res.status(404).json({ message: "Invoice not found" });
+    await clearCache(`invoices:${req.user.shopId}`);
     res.json({ message: "Invoice deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete invoice" });

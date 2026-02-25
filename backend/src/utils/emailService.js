@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log("Email Config - User:", process.env.EMAIL_USER);
+console.log("Email Config - Pass (prefix):", process.env.EMAIL_PASS ? (process.env.EMAIL_PASS.substring(0, 3) + "****") : "MISSING");
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -11,6 +14,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+console.log("Verifying Mail Transporter...");
 transporter.verify(function (error, success) {
   if (error) {
     console.error("❌ Transporter Verification Error:", error);

@@ -2,6 +2,8 @@ import Purchase from "../models/purchase.js";
 import Product from "../models/product.js";
 import { sendEmailWithAttachment } from "../utils/emailService.js";
 import PDFDocument from "pdfkit";
+import { redis, getKey } from "../config/redis.js";
+import { clearCache } from "../middleware/cache.js";
 
 export const createPurchase = async (req, res) => {
   try {
@@ -27,6 +29,7 @@ export const createPurchase = async (req, res) => {
       }
     }
 
+    await clearCache(`purchases:${req.user.shopId}`);
     res.status(201).json(purchase);
   } catch (error) {
     res.status(500).json({ message: "Failed to create purchase record", error: error.message });
@@ -35,7 +38,16 @@ export const createPurchase = async (req, res) => {
 
 export const getPurchases = async (req, res) => {
   try {
+    const cacheKey = getKey(`purchases:${req.user.shopId}`);
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      console.log("Redis Cache Hit: purchases");
+      return res.json(cached);
+    }
+
     const purchases = await Purchase.find({ shopId: req.user.shopId }).sort({ createdAt: -1 });
+    await redis.set(cacheKey, purchases, { ex: 3600 });
+    console.log("Redis Cache Miss: purchases. Cached result.");
     res.json(purchases);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch purchases" });
@@ -58,6 +70,7 @@ export const deletePurchase = async (req, res) => {
     }
 
     await Purchase.findByIdAndDelete(id);
+    await clearCache(`purchases:${req.user.shopId}`);
     res.json({ message: "Purchase deleted and stock reverted" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete purchase", error: error.message });

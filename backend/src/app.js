@@ -41,6 +41,16 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+app.get("/health/redis", async (req, res) => {
+  try {
+    const { redis } = await import("./config/redis.js");
+    const result = await redis.ping();
+    res.json({ status: "ok", redis: result });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
+});
+
 app.use("/auth", authRoutes);
 app.use("/products", productRoutes);
 app.use("/invoice", invoiceRoutes);
