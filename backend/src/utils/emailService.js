@@ -2,35 +2,49 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const POSTMARK_SERVER_TOKEN = (process.env.POSTMARK_SERVER_TOKEN || "").trim();
+const MAILJET_API_KEY = (process.env.MAILJET_API_KEY || "").trim();
+const MAILJET_SECRET_KEY = (process.env.MAILJET_SECRET_KEY || "").trim();
 const FROM_EMAIL = (process.env.FROM_EMAIL || "jusbill.contact@gmail.com").trim();
 
 export const sendEmailWithAttachment = async (to, subject, text, attachmentBuffer, filename) => {
   try {
-    if (!POSTMARK_SERVER_TOKEN) {
-      console.warn("⚠️ POSTMARK_SERVER_TOKEN is missing. Email skipped.");
+    if (!MAILJET_API_KEY || !MAILJET_SECRET_KEY) {
+      console.warn("⚠️ Mailjet credentials missing. Email skipped.");
       return;
     }
 
-    console.log(`Sending email to ${to} via Postmark...`);
+    console.log(`Sending email to ${to} via Mailjet API...`);
 
-    const response = await fetch('https://api.postmarkapp.com/email', {
+    const auth = Buffer.from(`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`).toString('base64');
+
+    const response = await fetch('https://api.mailjet.com/v3.1/send', {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Postmark-Server-Token': POSTMARK_SERVER_TOKEN
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        From: `JusBill <${FROM_EMAIL}>`,
-        To: to,
-        Subject: subject,
-        TextBody: text,
-        Attachments: [
+        Messages: [
           {
-            Name: filename,
-            Content: attachmentBuffer.toString('base64'),
-            ContentType: 'application/pdf'
+            From: {
+              Email: FROM_EMAIL,
+              Name: "JusBill"
+            },
+            To: [
+              {
+                Email: to,
+                Name: "Valued Customer"
+              }
+            ],
+            Subject: subject,
+            TextPart: text,
+            Attachments: [
+              {
+                ContentType: "application/pdf",
+                Filename: filename,
+                Base64Content: attachmentBuffer.toString('base64')
+              }
+            ]
           }
         ]
       })
@@ -39,12 +53,12 @@ export const sendEmailWithAttachment = async (to, subject, text, attachmentBuffe
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.Message || "Failed to send email via Postmark");
+      throw new Error(data.Messages?.[0]?.Errors?.[0]?.ErrorMessage || "Mailjet API Error");
     }
 
-    console.log("✅ Email sent successfully via Postmark:", data.MessageID);
+    console.log("✅ Email sent successfully via Mailjet");
     return data;
   } catch (error) {
-    console.error('❌ Postmark Error:', error.message);
+    console.error('❌ Mailjet Error:', error.message);
   }
 };
