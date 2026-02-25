@@ -1,49 +1,38 @@
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const RESEND_API_KEY = (process.env.RESEND_API_KEY || "").trim();
+const EMAIL_USER = (process.env.EMAIL_USER || "").trim();
+const EMAIL_PASS = (process.env.EMAIL_PASS || "").trim();
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: EMAIL_USER,
+    pass: EMAIL_PASS
+  }
+});
 
 export const sendEmailWithAttachment = async (to, subject, text, attachmentBuffer, filename) => {
   try {
-    if (!RESEND_API_KEY) {
-      console.error("❌ RESEND_API_KEY is missing. Email skipped.");
+    if (!EMAIL_USER || !EMAIL_PASS) {
+      console.warn("⚠️ Email credentials missing. Email skipped.");
       return;
     }
 
-    console.log(`Sending email to ${to} via Resend...`);
+    const mailOptions = {
+      from: `"JusBill" <${EMAIL_USER}>`,
+      to,
+      subject,
+      text,
+      attachments: [{ filename, content: attachmentBuffer }]
+    };
 
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: 'JusBill <onboarding@resend.dev>',
-        to: [to],
-        subject: subject,
-        text: text,
-        attachments: [
-          {
-            filename: filename,
-            content: attachmentBuffer.toString('base64'),
-          }
-        ]
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to send email via Resend");
-    }
-
-    console.log("✅ Email sent successfully via Resend:", data.id);
-    return data;
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent successfully via SMTP:", info.messageId);
+    return info;
   } catch (error) {
-    console.error('❌ Resend Email Error:', error.message);
-    // We don't throw here to keep it "background" as requested, 
-    // but the controller will handle its own try/catch if needed.
+    console.error('❌ Nodemailer Error:', error.message);
   }
 };
