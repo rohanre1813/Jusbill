@@ -1,7 +1,7 @@
 import Purchase from "../models/purchase.js";
 import Product from "../models/product.js";
 import { sendEmailWithAttachment } from "../utils/emailService.js";
-import puppeteer from "puppeteer";
+import PDFDocument from "pdfkit";
 
 export const createPurchase = async (req, res) => {
   try {
@@ -86,63 +86,48 @@ export const sendPurchaseReport = async (req, res) => {
 
     const totalExpenses = reportPurchases.reduce((sum, p) => sum + p.totalAmount, 0);
 
-    const htmlContent = `
-      <html>
-        <head>
-          <style>
-            body { font-family: 'Helvetica', sans-serif; padding: 20px; color: #333; }
-            h1 { text-align: center; color: #4f46e5; margin-bottom: 5px; }
-            p.date { text-align: center; color: #666; font-size: 12px; margin-bottom: 30px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; font-size: 12px; }
-            th { background-color: #f3f4f6; color: #374151; font-weight: 600; }
-            tr:nth-child(even) { background-color: #f9fafb; }
-            .total-row { font-weight: bold; background-color: #eef2ff; }
-            .summary-box { text-align: center; margin-bottom: 20px; padding: 15px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; }
-            .summary-val { font-size: 18px; font-weight: bold; color: #111827; }
-          </style>
-        </head>
-        <body>
-          <h1>Purchase History Report</h1>
-          <p class="date">Generated on: ${new Date().toLocaleString()}</p>
-          <p class="date">Period: ${periodLabel}</p>
-          <div class="summary-box">
-            Total Expenses: <span class="summary-val">₹${totalExpenses.toLocaleString('en-IN')}</span>
-          </div>
-          <h3>🛒 Detailed Purchase History</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th><th>Date</th><th>Supplier</th><th>Items</th>
-                <th style="text-align: right;">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${reportPurchases.map(p => `
-                <tr>
-                  <td>${p.purchaseId}</td>
-                  <td>${new Date(p.createdAt).toLocaleDateString()}</td>
-                  <td>${p.supplierName || "-"}</td>
-                  <td>${p.items.map(i => `${i.name} (${i.qty})`).join(", ")}</td>
-                  <td style="text-align: right;">₹${p.totalAmount.toLocaleString('en-IN')}</td>
-                </tr>
-              `).join("")}
-              <tr class="total-row">
-                <td colspan="4" style="text-align: right;">Total Expense</td>
-                <td style="text-align: right;">₹${totalExpenses.toLocaleString('en-IN')}</td>
-              </tr>
-            </tbody>
-          </table>
-          <p style="margin-top: 30px; font-size: 11px; color: #888; text-align: center;">End of Report</p>
-        </body>
-      </html>
-    `;
 
-    const browser = await puppeteer.launch({ headless: "new" });
-    const page = await browser.newPage();
-    await page.setContent(htmlContent);
-    const pdfBuffer = await page.pdf({ format: "A4" });
-    await browser.close();
+    const pdfBuffer = await new Promise((resolve, reject) => {
+      const doc = new PDFDocument({ margin: 40 });
+      const chunks = [];
+      doc.on("data", chunk => chunks.push(chunk));
+      doc.on("end", () => resolve(Buffer.concat(chunks)));
+      doc.on("error", reject);
+
+      doc.fontSize(18).font("Helvetica-Bold").text("Purchase Report", { align: "center" });
+      doc.fontSize(10).font("Helvetica").text(`Generated: ${new Date().toLocaleString()}`, { align: "center" });
+      doc.text(`Period: ${periodLabel}`, { align: "center" });
+      doc.moveDown();
+
+      doc.fontSize(11).font("Helvetica-Bold").text("Summary");
+      doc.font("Helvetica").fontSize(10);
+      doc.text(`Total Expenses: Rs.${totalExpenses.toLocaleString("en-IN")}`);
+      doc.moveDown();
+
+      doc.fontSize(11).font("Helvetica-Bold").text("Purchases");
+      doc.moveDown(0.5);
+
+      const colX = [40, 120, 200, 330, 430];
+      doc.fontSize(9).font("Helvetica-Bold");
+      ["Purchase ID", "Date", "Supplier", "Items", "Amount"].forEach((h, i) => doc.text(h, colX[i], doc.y, { continued: i < 4 }));
+      doc.moveDown(0.3);
+      doc.font("Helvetica").fontSize(9);
+
+      reportPurchases.forEach(p => {
+        const y = doc.y;
+        const itemsSummary = p.items.map(i => `${i.name} (${i.qty})`).join(", ");
+        doc.text(p.purchaseId, colX[0], y, { continued: false });
+        doc.text(new Date(p.createdAt).toLocaleDateString(), colX[1], y, { continued: false });
+        doc.text(p.supplierName || "-", colX[2], y, { continued: false });
+        doc.text(itemsSummary, colX[3], y, { width: 90, continued: false });
+        doc.text(`Rs.${p.totalAmount.toLocaleString("en-IN")}`, colX[4], y, { continued: false });
+        doc.moveDown(0.5);
+      });
+
+      doc.moveDown();
+      doc.font("Helvetica-Bold").text(`Total Expense: Rs.${totalExpenses.toLocaleString("en-IN")}`, { align: "right" });
+      doc.end();
+    });
 
     sendEmailWithAttachment(
       req.user.email,

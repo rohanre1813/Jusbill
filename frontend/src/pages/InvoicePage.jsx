@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { getProducts } from "../api/product.api";
 import { getProfile } from "../api/user.api";
 import { createInvoice, sendInvoiceEmail } from "../api/invoice.api";
+import { getCustomers } from "../api/customer.api";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Save, Trash2, User, Phone, MapPin, Mail, FileText, X, Printer, Download, Percent, ChevronDown, Check, Send } from "lucide-react";
 import toast from "react-hot-toast";

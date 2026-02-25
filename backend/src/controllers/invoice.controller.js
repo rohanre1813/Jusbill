@@ -2,7 +2,7 @@ import Invoice from "../models/invoice.js";
 import Product from "../models/product.js";
 import Counter from "../models/counter.js";
 import { sendEmailWithAttachment } from "../utils/emailService.js";
-import puppeteer from "puppeteer";
+import PDFDocument from "pdfkit";
 
 export const createInvoice = async (req, res) => {
   try {
@@ -186,79 +186,49 @@ export const sendSalesReport = async (req, res) => {
       else totalUnpaid += (inv.grandTotal || 0);
     }
 
-    const htmlContent = `
-      <html>
-        <head>
-          <style>
-            body { font-family: 'Helvetica', sans-serif; padding: 20px; color: #333; }
-            h1 { text-align: center; color: #4f46e5; margin-bottom: 5px; }
-            p.date { text-align: center; color: #666; font-size: 12px; margin-bottom: 30px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; font-size: 12px; }
-            th { background-color: #f3f4f6; color: #374151; font-weight: 600; }
-            tr:nth-child(even) { background-color: #f9fafb; }
-            .total-row { font-weight: bold; background-color: #eef2ff; }
-            .status { font-weight: bold; }
-            .paid { color: #16a34a; }
-            .unpaid { color: #dc2626; }
-            .summary-box { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 15px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; }
-            .summary-item { text-align: center; }
-            .summary-label { font-size: 10px; color: #6b7280; letter-spacing: 0.5px; }
-            .summary-val { font-size: 16px; font-weight: bold; color: #111827; }
-          </style>
-        </head>
-        <body>
-          <h1>Sales Report</h1>
-          <p class="date">Generated on: ${new Date().toLocaleString()}</p>
-          <p class="date">Period: ${periodLabel}</p>
-          <div class="summary-box">
-            <div class="summary-item">
-              <div class="summary-label">Total Sales</div>
-              <div class="summary-val">₹${totalSales.toLocaleString('en-IN')}</div>
-            </div>
-            <div class="summary-item">
-              <div class="summary-label">Received</div>
-              <div class="summary-val" style="color: #16a34a;">₹${totalPaid.toLocaleString('en-IN')}</div>
-            </div>
-            <div class="summary-item">
-              <div class="summary-label">Pending</div>
-              <div class="summary-val" style="color: #dc2626;">₹${totalUnpaid.toLocaleString('en-IN')}</div>
-            </div>
-          </div>
-          <h3>🧾 Transactions</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Invoice ID</th><th>Date</th><th>Customer</th>
-                <th>Status</th><th style="text-align: right;">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${reportInvoices.map(inv => `
-                <tr>
-                  <td>${inv.invoiceId}</td>
-                  <td>${new Date(inv.createdAt).toLocaleDateString()}</td>
-                  <td>${inv.customerName}</td>
-                  <td class="status ${inv.paymentStatus === 'Paid' ? 'paid' : 'unpaid'}">${inv.paymentStatus}</td>
-                  <td style="text-align: right;">₹${inv.grandTotal.toLocaleString('en-IN')}</td>
-                </tr>
-              `).join("")}
-              <tr class="total-row">
-                <td colspan="4" style="text-align: right;">Total</td>
-                <td style="text-align: right;">₹${totalSales.toLocaleString('en-IN')}</td>
-              </tr>
-            </tbody>
-          </table>
-          <p style="margin-top: 30px; font-size: 11px; color: #888; text-align: center;">End of Report</p>
-        </body>
-      </html>
-    `;
 
-    const browser = await puppeteer.launch({ headless: "new" });
-    const page = await browser.newPage();
-    await page.setContent(htmlContent);
-    const pdfBuffer = await page.pdf({ format: "A4" });
-    await browser.close();
+    const pdfBuffer = await new Promise((resolve, reject) => {
+      const doc = new PDFDocument({ margin: 40 });
+      const chunks = [];
+      doc.on("data", chunk => chunks.push(chunk));
+      doc.on("end", () => resolve(Buffer.concat(chunks)));
+      doc.on("error", reject);
+
+      doc.fontSize(18).font("Helvetica-Bold").text("Sales Report", { align: "center" });
+      doc.fontSize(10).font("Helvetica").text(`Generated: ${new Date().toLocaleString()}`, { align: "center" });
+      doc.text(`Period: ${periodLabel}`, { align: "center" });
+      doc.moveDown();
+
+      doc.fontSize(11).font("Helvetica-Bold").text("Summary");
+      doc.font("Helvetica").fontSize(10);
+      doc.text(`Total Sales: Rs.${totalSales.toLocaleString("en-IN")}`);
+      doc.text(`Received: Rs.${totalPaid.toLocaleString("en-IN")}`);
+      doc.text(`Pending: Rs.${totalUnpaid.toLocaleString("en-IN")}`);
+      doc.moveDown();
+
+      doc.fontSize(11).font("Helvetica-Bold").text("Transactions");
+      doc.moveDown(0.5);
+
+      const colX = [40, 120, 200, 330, 420];
+      doc.fontSize(9).font("Helvetica-Bold");
+      ["Invoice ID", "Date", "Customer", "Status", "Amount"].forEach((h, i) => doc.text(h, colX[i], doc.y, { continued: i < 4 }));
+      doc.moveDown(0.3);
+      doc.font("Helvetica").fontSize(9);
+
+      reportInvoices.forEach(inv => {
+        const y = doc.y;
+        doc.text(inv.invoiceId, colX[0], y, { continued: false });
+        doc.text(new Date(inv.createdAt).toLocaleDateString(), colX[1], y, { continued: false });
+        doc.text(inv.customerName, colX[2], y, { continued: false });
+        doc.text(inv.paymentStatus, colX[3], y, { continued: false });
+        doc.text(`Rs.${inv.grandTotal.toLocaleString("en-IN")}`, colX[4], y, { continued: false });
+        doc.moveDown(0.5);
+      });
+
+      doc.moveDown();
+      doc.font("Helvetica-Bold").text(`Total: Rs.${totalSales.toLocaleString("en-IN")}`, { align: "right" });
+      doc.end();
+    });
 
     sendEmailWithAttachment(
       req.user.email,
