@@ -626,49 +626,61 @@ export default function InvoicePage() {
         </div>
       </div>
 
-      <AnimatePresence>
-        {showConfirm && createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-sm w-full"
-            >
-              <div className="flex items-center gap-3 text-amber-500 mb-4">
-                <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                  <FileText size={24} />
+      {createPortal(
+        <AnimatePresence>
+          {showConfirm && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/40 backdrop-blur-md"
+                onClick={() => {
+                  setShowConfirm(false);
+                  setPendingAction(null);
+                }}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-sm w-full z-10"
+              >
+                <div className="flex items-center gap-3 text-amber-500 mb-4">
+                  <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                    <FileText size={24} />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Confirm Invoice</h3>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Confirm Invoice</h3>
-              </div>
 
-              <p className="text-gray-600 dark:text-gray-400 mb-6 font-medium">
-                Are you sure you want to {pendingAction?.type === 'send' ? 'save and send' : 'save'} this invoice?
-                <span className="block mt-2 text-sm text-red-500 font-bold">⚠️ Changes cannot be undone once saved.</span>
-              </p>
+                <p className="text-gray-600 dark:text-gray-400 mb-6 font-medium">
+                  Are you sure you want to {pendingAction?.type === 'send' ? 'save and send' : 'save'} this invoice?
+                  <span className="block mt-2 text-sm text-red-500 font-bold">⚠️ Changes cannot be undone once saved.</span>
+                </p>
 
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowConfirm(false);
-                    setPendingAction(null);
-                  }}
-                  className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl font-medium transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirmAction}
-                  className="flex-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/30 transition-all active:scale-95"
-                >
-                  Confirm
-                </button>
-              </div>
-            </motion.div>
-          </div>,
-          document.body
-        )}
-      </AnimatePresence>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowConfirm(false);
+                      setPendingAction(null);
+                    }}
+                    className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl font-medium transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmAction}
+                    className="flex-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/30 transition-all active:scale-95"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }
