@@ -29,7 +29,12 @@ export const createPurchase = async (req, res) => {
       }
     }
 
-    await clearCache(`purchases:${req.user.shopId}`);
+    await purchase.save();
+    try {
+      await clearCache(`purchases:${req.user.shopId}`);
+    } catch (redisError) {
+      console.error("Redis Clear Error (createPurchase):", redisError.message);
+    }
     res.status(201).json(purchase);
   } catch (error) {
     res.status(500).json({ message: "Failed to create purchase record", error: error.message });
@@ -39,15 +44,23 @@ export const createPurchase = async (req, res) => {
 export const getPurchases = async (req, res) => {
   try {
     const cacheKey = getKey(`purchases:${req.user.shopId}`);
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      console.log("Redis Cache Hit: purchases");
-      return res.json(cached);
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        console.log("Redis Cache Hit: purchases");
+        return res.json(cached);
+      }
+    } catch (redisError) {
+      console.error("Redis Get Error (purchases):", redisError.message);
     }
 
     const purchases = await Purchase.find({ shopId: req.user.shopId }).sort({ createdAt: -1 });
-    await redis.set(cacheKey, purchases, { ex: 3600 });
-    console.log("Redis Cache Miss: purchases. Cached result.");
+    try {
+      await redis.set(cacheKey, purchases, { ex: 3600 });
+      console.log("Redis Cache Miss: purchases. Cached result.");
+    } catch (redisError) {
+      console.error("Redis Set Error (purchases):", redisError.message);
+    }
     res.json(purchases);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch purchases" });
@@ -70,7 +83,11 @@ export const deletePurchase = async (req, res) => {
     }
 
     await Purchase.findByIdAndDelete(id);
-    await clearCache(`purchases:${req.user.shopId}`);
+    try {
+      await clearCache(`purchases:${req.user.shopId}`);
+    } catch (redisError) {
+      console.error("Redis Clear Error (deletePurchase):", redisError.message);
+    }
     res.json({ message: "Purchase deleted and stock reverted" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete purchase", error: error.message });
