@@ -138,15 +138,22 @@ export const sendPurchaseReport = async (req, res) => {
       doc.fontSize(11).font("Helvetica-Bold").text("Purchases");
       doc.moveDown(0.5);
 
-      const colX = [40, 120, 200, 330, 430];
+      const colX = [40, 120, 200, 310, 420];
       doc.fontSize(9).font("Helvetica-Bold");
       ["Purchase ID", "Date", "Supplier", "Items", "Amount"].forEach((h, i) => doc.text(h, colX[i], doc.y, { continued: i < 4 }));
       doc.moveDown(0.3);
       doc.font("Helvetica").fontSize(9);
 
       reportPurchases.forEach(p => {
+        if (doc.y > 650) {
+          doc.addPage();
+          doc.fontSize(9).font("Helvetica-Bold");
+          ["Purchase ID", "Date", "Supplier", "Items", "Amount"].forEach((h, i) => doc.text(h, colX[i], doc.y, { continued: i < 4 }));
+          doc.moveDown(0.3);
+          doc.font("Helvetica").fontSize(9);
+        }
         const y = doc.y;
-        const itemsSummary = p.items.map(i => `${i.name} (${i.qty})`).join(", ");
+        const itemsSummary = p.items.map(it => `${it.name} (x${it.qty})`).join(", ");
         doc.text(p.purchaseId, colX[0], y, { continued: false });
         doc.text(new Date(p.createdAt).toLocaleDateString(), colX[1], y, { continued: false });
         doc.text(p.supplierName || "-", colX[2], y, { continued: false });

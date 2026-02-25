@@ -15,7 +15,7 @@ A modern, full-stack invoicing and inventory management solution designed for sm
 
 - **Frontend**: React, Vite, Tailwind CSS, Framer Motion, Lucide Icons.
 - **Backend**: Node.js, Express, MongoDB (Mongoose), Redis (Upstash).
-- **Communication**: Resend (Email), Cloudinary (Images).
+- **Communication**: Mailjet (Email), Cloudinary (Images).
 - **Deployment**: Docker, Docker Compose, Nginx.
 
 ## 📦 Getting Started
@@ -33,7 +33,8 @@ A modern, full-stack invoicing and inventory management solution designed for sm
    - `MONGO_URI`: Your MongoDB connection string.
    - `JWT_SECRET`: A secure random string for signing tokens.
    - `CLOUDINARY_*`: Your Cloudinary credentials for image storage.
-   - `EMAIL_USER` & `EMAIL_PASS`: SMTP credentials for emailing invoices.
+   - `MAILJET_API_KEY` & `MAILJET_SECRET_KEY`: Credentials from Mailjet for sending emails.
+   - `FROM_EMAIL`: Your verified sender email address on Mailjet.
    - `UPSTASH_REDIS_*`: Redis credentials for caching.
 
 ### Running with Docker
