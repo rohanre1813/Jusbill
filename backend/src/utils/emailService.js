@@ -7,11 +7,14 @@ console.log("Email Config - User:", process.env.EMAIL_USER);
 console.log("Email Config - Pass (prefix):", process.env.EMAIL_PASS ? (process.env.EMAIL_PASS.substring(0, 3) + "****") : "MISSING");
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  timeout: 10000 // 10 seconds timeout
 });
 
 console.log("Verifying Mail Transporter...");

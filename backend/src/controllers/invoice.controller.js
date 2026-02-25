@@ -194,9 +194,14 @@ export const sendInvoiceEmail = async (req, res) => {
 
     const buffer = Buffer.from(pdfBuffer, 'base64');
     const filenamePrefix = type === "Reminder" ? "Invoice" : type;
-    await sendEmailWithAttachment(email, subject, text, buffer, `${filenamePrefix}_${invoiceId || "Draft"}.pdf`);
 
-    res.status(200).json({ message: "Email sent successfully" });
+    try {
+      await sendEmailWithAttachment(email, subject, text, buffer, `${filenamePrefix}_${invoiceId || "Draft"}.pdf`);
+      res.status(200).json({ message: "Email sent successfully" });
+    } catch (err) {
+      console.error("Single email send failed:", err);
+      res.status(500).json({ message: "Failed to send email", error: err.message });
+    }
   } catch (error) {
     res.status(500).json({ message: "Failed to send email", error: error.message });
   }
@@ -271,16 +276,20 @@ export const sendSalesReport = async (req, res) => {
     console.log("PDF Report Generated. Size:", pdfBuffer.length);
 
     console.log("Initiating email send to:", req.user.email);
-    sendEmailWithAttachment(
-      req.user.email,
-      `Sales Report (${periodLabel})`,
-      `Attached is your sales report for the period: ${periodLabel}.`,
-      pdfBuffer,
-      `Sales_Report_${fromDate || 'All'}_to_${toDate || 'Time'}.pdf`
-    ).then(() => console.log("Sales report email sent successfully!"))
-      .catch(err => console.error("Sales report email failed:", err));
-
-    res.json({ message: "Report generated successfully" });
+    try {
+      await sendEmailWithAttachment(
+        req.user.email,
+        `Sales Report (${periodLabel})`,
+        `Attached is your sales report for the period: ${periodLabel}.`,
+        pdfBuffer,
+        `Sales_Report_${fromDate || 'All'}_to_${toDate || 'Time'}.pdf`
+      );
+      console.log("Sales report email sent successfully!");
+      res.json({ message: "Report generated successfully" });
+    } catch (err) {
+      console.error("Sales report email failed:", err);
+      res.status(500).json({ message: "Failed to send email", error: err.message });
+    }
   } catch (error) {
     res.status(500).json({ message: "Failed to send report", error: error.message });
   }
