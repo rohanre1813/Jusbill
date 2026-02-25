@@ -11,19 +11,20 @@ console.log("Email Config - Pass (prefix):", EMAIL_PASS ? (EMAIL_PASS.substring(
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
+  port: 465,
+  secure: true,
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASS
   },
   tls: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: false, // Bypass SSL certificate issues on some cloud providers
     minVersion: 'TLSv1.2'
   },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 20000,
+  family: 4, // Force IPv4 to avoid IPv6 timeout issues seen in logs
+  connectionTimeout: 30000, // 30 seconds
+  greetingTimeout: 30000,
+  socketTimeout: 60000,
   debug: true,
   logger: true
 });

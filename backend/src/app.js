@@ -58,4 +58,21 @@ app.use("/customers", customerRoutes);
 app.use("/users", userRoutes);
 app.use("/purchases", purchaseRoutes);
 
+// Email Diagnostic Route
+app.get("/test-email", async (req, res) => {
+  try {
+    const { sendEmailWithAttachment } = await import("./utils/emailService.js");
+    await sendEmailWithAttachment(
+      process.env.EMAIL_USER,
+      "Test Connectivity",
+      "If you received this, SMTP is working!",
+      Buffer.from("Test content"),
+      "test.txt"
+    );
+    res.json({ message: "Test email sent successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message, stack: error.stack });
+  }
+});
+
 export default app;
