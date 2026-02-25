@@ -7,17 +7,20 @@ const EMAIL_USER = (process.env.EMAIL_USER || "").trim();
 const EMAIL_PASS = (process.env.EMAIL_PASS || "").trim();
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASS
-  }
+  },
+  family: 4
 });
 
 export const sendEmailWithAttachment = async (to, subject, text, attachmentBuffer, filename) => {
   try {
     if (!EMAIL_USER || !EMAIL_PASS) {
-      console.warn("⚠️ Email credentials missing. Email skipped.");
+      console.warn("⚠️ Email credentials missing.");
       return;
     }
 
@@ -30,9 +33,9 @@ export const sendEmailWithAttachment = async (to, subject, text, attachmentBuffe
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent successfully via SMTP:", info.messageId);
+    console.log("✅ Email sent:", info.messageId);
     return info;
   } catch (error) {
-    console.error('❌ Nodemailer Error:', error.message);
+    console.error('❌ Email Error:', error.message);
   }
 };
