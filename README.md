@@ -11,7 +11,7 @@ A modern, full-stack invoicing and inventory management solution designed for sm
 - **📈 Business Analytics**: Comprehensive sales reports and product performance metrics with interactive charts.
 - **🏪 Public Shop Profile**: Share your inventory with customers via a dedicated public URL.
 - **🎨 Multi-Theme Support**: Sleek, responsive design with beautiful dark and light modes.
-- **🔒 Secure Authentication**: JWT-based session management with secure cookies and OTP verification.
+- **🔒 Secure Authentication**: JWT-based session management with secure cookies.
 - **📱 Responsive UI**: Fully optimized for mobile, tablet, and desktop views.
 
 ## 🛠️ Tech Stack
@@ -29,6 +29,7 @@ A modern, full-stack invoicing and inventory management solution designed for sm
 - **Database**: [MongoDB](https://www.mongodb.com/) (using Mongoose)
 - **Email Service**: [Mailjet](https://www.mailjet.com/)
 - **Image Storage**: [Cloudinary](https://cloudinary.com/)
+- **Redis Upstash**: [for caching]
 
 ### Deployment & Infrastructure
 - **Containerization**: [Docker](https://www.docker.com/) & Docker Compose
