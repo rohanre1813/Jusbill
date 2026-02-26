@@ -33,16 +33,16 @@ export default function ProfilePage() {
     try {
       const res = await getProfile();
       const data = res.data;
-      setValue("companyName", data.companyName);
-      setValue("mobile", data.mobile);
-      setValue("secondaryMobile", data.secondaryMobile);
-      setValue("address", data.address);
-      setValue("state", data.state);
-      setValue("email", data.email);
-      setValue("gstin", data.gstin);
-      setValue("bankName", data.bankName);
-      setValue("bankAccount", data.bankAccount);
-      setValue("ifscCode", data.ifscCode);
+      setValue("companyName", data.companyName || "");
+      setValue("mobile", data.mobile || "");
+      setValue("secondaryMobile", data.secondaryMobile || "");
+      setValue("address", data.address || "");
+      setValue("state", data.state || "");
+      setValue("email", data.email || "");
+      setValue("gstin", data.gstin || "");
+      setValue("bankName", data.bankName || "");
+      setValue("bankAccount", data.bankAccount || "");
+      setValue("ifscCode", data.ifscCode || "");
 
       if (data.profileImage) setPreviewImage(data.profileImage);
       if (data.qrCode) setPreviewQr(data.qrCode);
