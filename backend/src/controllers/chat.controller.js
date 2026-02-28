@@ -2,8 +2,8 @@ import Invoice from "../models/invoice.js";
 import Purchase from "../models/purchase.js";
 import Product from "../models/product.js";
 
-const HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.2";
-const HF_URL = "https://router.huggingface.co/hf-inference/v1/chat/completions";
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL = "llama-3.1-8b-instant"; // Free, fast Llama 3.1 model
 
 // Fetch shop data summaries for context
 const getShopContext = async (shopId) => {
@@ -50,31 +50,31 @@ export const chat = async (req, res) => {
 
     if (!message) return res.status(400).json({ message: "Message is required" });
 
-    const apiKey = process.env.HF_API_KEY;
-    if (!apiKey) return res.status(500).json({ message: "HuggingFace API key not configured" });
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return res.status(500).json({ message: "Groq API key not configured" });
 
     const data = await getShopContext(req.user.shopId);
 
-    const systemContent = `You are JusBill AI, a business assistant. Answer only questions about the shop's business data below. Be concise, use bullet points, format currency in ₹. Do not make up data.
+    const systemContent = `You are JusBill AI, a smart business assistant. Answer only questions about the shop's business data provided below. Be concise, use bullet points, and format currency in Indian Rupees (₹). Do not make up data. If you don't have enough data to answer, say so clearly.
 
-SHOP DATA:
-- Products: ${data.totalProducts}
+SHOP DATA SUMMARY:
+- Total Products: ${data.totalProducts}
 - Total Sales: ₹${data.totalSales.toLocaleString("en-IN")}
 - Received (Paid): ₹${data.totalPaid.toLocaleString("en-IN")}
 - Pending (Unpaid): ₹${data.totalUnpaid.toLocaleString("en-IN")}
-- Total Purchases: ₹${data.totalPurchases.toLocaleString("en-IN")}
+- Total Purchases (Expenses): ₹${data.totalPurchases.toLocaleString("en-IN")}
 - Profit Estimate: ₹${(data.totalSales - data.totalPurchases).toLocaleString("en-IN")}
 
 PRODUCTS:
-${data.productSummary || "None"}
+${data.productSummary || "No products found."}
 
 RECENT SALES (INVOICES):
-${data.invoiceSummary || "None"}
+${data.invoiceSummary || "No invoices found."}
 
 RECENT PURCHASES:
-${data.purchaseSummary || "None"}`;
+${data.purchaseSummary || "No purchases found."}`;
 
-    // Build messages array in OpenAI format
+    // Build messages array
     const messages = [{ role: "system", content: systemContent }];
 
     // Add recent chat history (last 10 messages)
@@ -87,20 +87,19 @@ ${data.purchaseSummary || "None"}`;
       }
     }
 
-    // Add current user message
     messages.push({ role: "user", content: message });
 
-    // Call HuggingFace chat completions endpoint
-    const response = await fetch(HF_URL, {
+    // Call Groq API
+    const response = await fetch(GROQ_URL, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: HF_MODEL,
+        model: GROQ_MODEL,
         messages,
-        max_tokens: 512,
+        max_tokens: 1024,
         temperature: 0.7,
         stream: false
       })
@@ -108,7 +107,7 @@ ${data.purchaseSummary || "None"}`;
 
     if (!response.ok) {
       const error = await response.text();
-      console.error("HuggingFace API Error:", error);
+      console.error("Groq API Error:", error);
       return res.status(500).json({ message: "AI service error", error });
     }
 

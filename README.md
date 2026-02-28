@@ -34,7 +34,7 @@ A modern, full-stack invoicing and inventory management solution designed for sm
 - **Email Service**: [Mailjet](https://www.mailjet.com/)
 - **Image Storage**: [Cloudinary](https://cloudinary.com/)
 - **Redis Upstash**: [for caching]
-- **AI**: [HuggingFace Inference API](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) (Mistral-7B-Instruct)
+- **AI**: [Groq API](https://console.groq.com/) (Llama 3.1 8B — free tier, 14,400 req/day)
 
 ### Deployment & Infrastructure
 - **Containerization**: [Docker](https://www.docker.com/) & Docker Compose
@@ -55,7 +55,7 @@ A modern, full-stack invoicing and inventory management solution designed for sm
    - `CLOUDINARY_*`: Your Cloudinary credentials for image storage.
    - `MAILJET_API_KEY` & `MAILJET_SECRET_KEY`: Credentials from Mailjet for sending emails.
    - `FROM_EMAIL`: Your verified sender email address on Mailjet.
-   - `HF_API_KEY`: Your HuggingFace token for the AI assistant (free at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)).
+   - `GROQ_API_KEY`: Your Groq API key for the AI assistant (free at [console.groq.com](https://console.groq.com/)).
 
 ### Running the Application
 
