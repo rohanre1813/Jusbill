@@ -110,8 +110,8 @@ export const getInvoices = async (req, res) => {
 
     const invoices = await Invoice.find(query).sort({ createdAt: -1 });
 
-    // Compute stats from ALL invoices (including deleted) for accurate totals
-    const allInvoices = await Invoice.find({ shopId: req.user.shopId }).select("grandTotal paymentStatus");
+    // Compute stats from non-deleted invoices only (deleted invoices revert stock and don't count)
+    const allInvoices = await Invoice.find({ shopId: req.user.shopId, isDeleted: { $ne: true } }).select("grandTotal paymentStatus");
     let totalSales = 0, totalReceived = 0, totalPending = 0;
     for (const inv of allInvoices) {
       totalSales += inv.grandTotal || 0;
@@ -165,21 +165,29 @@ export const updatePaymentStatus = async (req, res) => {
 
 export const deleteInvoice = async (req, res) => {
   try {
-    const invoice = await Invoice.findOneAndUpdate(
-      { _id: req.params.id, shopId: req.user.shopId },
-      { isDeleted: true },
-      { new: true }
-    );
+    const invoice = await Invoice.findOne({ _id: req.params.id, shopId: req.user.shopId });
 
     if (!invoice) return res.status(404).json({ message: "Invoice not found" });
 
+    // Revert stock for each item in the invoice
+    for (const item of invoice.items) {
+      await Product.findByIdAndUpdate(item.productId, {
+        $inc: { stock: item.qty, sold: -item.qty }
+      });
+    }
+
+    // Soft delete the invoice
+    invoice.isDeleted = true;
+    await invoice.save();
+
     try {
       await clearCache(`invoices:${req.user.shopId}`);
+      await clearCache(`products:${req.user.shopId}`);
     } catch (redisError) {
       console.error("Redis Clear Error (deleteInvoice):", redisError.message);
     }
 
-    res.json({ message: "Invoice deleted successfully" });
+    res.json({ message: "Invoice deleted and stock reverted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete invoice" });
   }
