@@ -3,7 +3,7 @@ import Purchase from "../models/purchase.js";
 import Product from "../models/product.js";
 
 const HF_MODEL = "google/gemma-2-2b-it";
-const HF_URL = `https://api-inference.huggingface.co/models/${HF_MODEL}`;
+const HF_URL = `https://router.huggingface.co/hf-inference/models/${HF_MODEL}`;
 
 // Fetch shop data summaries for context
 const getShopContext = async (shopId) => {
