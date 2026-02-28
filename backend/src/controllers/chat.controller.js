@@ -3,7 +3,7 @@ import Purchase from "../models/purchase.js";
 import Product from "../models/product.js";
 
 const HF_MODEL = "google/gemma-2-2b-it";
-const HF_URL = `https://router.huggingface.co/hf-inference/models/${HF_MODEL}`;
+const HF_URL = `https://router.huggingface.co/hf-inference/models/${HF_MODEL}/v1/chat/completions`;
 
 // Fetch shop data summaries for context
 const getShopContext = async (shopId) => {
@@ -55,7 +55,7 @@ export const chat = async (req, res) => {
 
     const data = await getShopContext(req.user.shopId);
 
-    const systemText = `You are JusBill AI, a business assistant. Answer only questions about the shop's business data below. Be concise, use bullet points, format currency in ₹. Do not make up data.
+    const systemContent = `You are JusBill AI, a business assistant. Answer only questions about the shop's business data below. Be concise, use bullet points, format currency in ₹. Do not make up data.
 
 SHOP DATA:
 - Products: ${data.totalProducts}
@@ -74,24 +74,23 @@ ${data.invoiceSummary || "None"}
 RECENT PURCHASES:
 ${data.purchaseSummary || "None"}`;
 
-    // Build prompt in Gemma chat format
-    let prompt = `<start_of_turn>user\n${systemText}\n\nAnswer the following question based on the data above.<end_of_turn>\n<start_of_turn>model\nUnderstood! I will only answer based on your shop data.<end_of_turn>\n`;
+    // Build messages array in OpenAI format
+    const messages = [{ role: "system", content: systemContent }];
 
-    // Add recent history (last 10 messages to keep prompt short)
+    // Add recent chat history (last 10 messages)
     if (history && Array.isArray(history)) {
-      const recent = history.slice(-10);
-      for (const msg of recent) {
-        if (msg.role === "user") {
-          prompt += `<start_of_turn>user\n${msg.content}<end_of_turn>\n`;
-        } else {
-          prompt += `<start_of_turn>model\n${msg.content}<end_of_turn>\n`;
-        }
+      for (const msg of history.slice(-10)) {
+        messages.push({
+          role: msg.role === "user" ? "user" : "assistant",
+          content: msg.content
+        });
       }
     }
 
-    prompt += `<start_of_turn>user\n${message}<end_of_turn>\n<start_of_turn>model\n`;
+    // Add current user message
+    messages.push({ role: "user", content: message });
 
-    // Call HuggingFace Inference API
+    // Call HuggingFace chat completions endpoint
     const response = await fetch(HF_URL, {
       method: "POST",
       headers: {
@@ -99,23 +98,22 @@ ${data.purchaseSummary || "None"}`;
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        inputs: prompt,
-        parameters: {
-          max_new_tokens: 512,
-          temperature: 0.7,
-          return_full_text: false
-        }
+        model: HF_MODEL,
+        messages,
+        max_tokens: 512,
+        temperature: 0.7,
+        stream: false
       })
     });
 
-    const result = await response.json();
-
     if (!response.ok) {
-      console.error("HuggingFace API Error:", result);
-      return res.status(500).json({ message: "AI service error", error: result.error });
+      const error = await response.text();
+      console.error("HuggingFace API Error:", error);
+      return res.status(500).json({ message: "AI service error", error });
     }
 
-    const aiResponse = result[0]?.generated_text?.trim() || "Sorry, I could not generate a response.";
+    const result = await response.json();
+    const aiResponse = result.choices?.[0]?.message?.content?.trim() || "Sorry, I could not generate a response.";
 
     res.json({ response: aiResponse });
   } catch (error) {
