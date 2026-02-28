@@ -3,7 +3,7 @@ import Purchase from "../models/purchase.js";
 import Product from "../models/product.js";
 
 const HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.2";
-const HF_URL = `https://router.huggingface.co/hf-inference/models/${HF_MODEL}/v1/chat/completions`;
+const HF_URL = "https://router.huggingface.co/hf-inference/v1/chat/completions";
 
 // Fetch shop data summaries for context
 const getShopContext = async (shopId) => {
