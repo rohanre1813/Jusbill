@@ -17,6 +17,11 @@ function NotificationBell() {
     if (user) {
       loadNotifications();
     }
+
+    // Listen for stock changes from other pages
+    const handleStockChange = () => loadNotifications();
+    window.addEventListener("stock-changed", handleStockChange);
+    return () => window.removeEventListener("stock-changed", handleStockChange);
   }, []);
 
   const loadNotifications = async () => {

@@ -266,6 +266,7 @@ export default function ReportsPage() {
 
       await createPurchase(payload);
       toast.success("Purchase recorded successfully!");
+      window.dispatchEvent(new Event("stock-changed"));
 
       // Reset
       setRows([]);
@@ -282,6 +283,7 @@ export default function ReportsPage() {
     try {
       await deletePurchase(id);
       toast.success("Purchase deleted");
+      window.dispatchEvent(new Event("stock-changed"));
       loadData();
     } catch (error) {
       toast.error("Failed to delete purchase");

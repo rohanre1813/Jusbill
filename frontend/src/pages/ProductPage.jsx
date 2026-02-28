@@ -82,6 +82,7 @@ export default function ProductPage() {
       // Default stock and purchasePrice to 0 explicitly
       await createProduct({ ...form, stock: 0, purchasePrice: 0 });
       toast.success("Product added successfully!");
+      window.dispatchEvent(new Event("stock-changed"));
 
       setForm({
         name: "",
@@ -111,6 +112,7 @@ export default function ProductPage() {
     try {
       await updateProduct(id, editForm);
       toast.success("Product updated successfully");
+      window.dispatchEvent(new Event("stock-changed"));
       setEditingId(null);
       load();
     } catch (error) {
@@ -124,6 +126,7 @@ export default function ProductPage() {
     try {
       await deleteProduct(id);
       toast.success("Product deleted successfully");
+      window.dispatchEvent(new Event("stock-changed"));
       load();
     } catch (error) {
       console.error(error);

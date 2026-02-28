@@ -265,6 +265,7 @@ export default function InvoicePage() {
       });
 
       toast.success(`Invoice Saved: ${res.data.invoiceId}`);
+      window.dispatchEvent(new Event("stock-changed"));
       setRows([]);
       setCustomer("");
       setDiscount(0);
@@ -287,7 +288,7 @@ export default function InvoicePage() {
       price: r.price,
       qty: r.qty
     })),
-    
+
     subtotal,
     discount,
     discountAmount,
