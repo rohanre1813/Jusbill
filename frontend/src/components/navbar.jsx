@@ -3,10 +3,91 @@ import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { Sun, Moon, Package, FileText, LogOut, User, Bell, AlertTriangle, X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { getProducts } from "../api/product.api";
 
 import { logout as logoutApi } from "../api/auth.api";
+
+const NotificationBell = memo(({ user }) => {
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      loadNotifications();
+    }
+  }, [user]);
+
+  const loadNotifications = async () => {
+    try {
+      const res = await getProducts();
+      const lowStock = res.data.filter(p => p.stock < 5);
+      setNotifications(lowStock);
+    } catch (error) {
+      console.error("Failed to load notifications", error);
+    }
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setShowNotifications(!showNotifications)}
+        className="relative p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+      >
+        <Bell size={20} />
+        {notifications.length > 0 && (
+          <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
+            {notifications.length}
+          </span>
+        )}
+      </button>
+
+      <AnimatePresence>
+        {showNotifications && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[100]"
+          >
+            <div className="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="font-semibold text-gray-900 dark:text-white text-sm">Notifications</h3>
+              <button
+                onClick={() => setShowNotifications(false)}
+                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              >
+                <X size={14} />
+              </button>
+            </div>
+
+            <div className="max-h-60 overflow-y-auto">
+              {notifications.length > 0 ? (
+                notifications.map((product) => (
+                  <div key={product._id} className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 flex items-start gap-3 border-b border-gray-50 dark:border-gray-700/50 last:border-0 transition-colors">
+                    <div className="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-lg">
+                      <AlertTriangle size={16} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white">{product.name}</h4>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        Low Stock: Only <span className="font-bold text-amber-600 dark:text-amber-400">{product.stock}</span> remaining.
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-4 text-center text-gray-400 dark:text-gray-500 text-sm">
+                  <Check size={24} className="mx-auto mb-2 opacity-50" />
+                  <p>All stocks are healthy!</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+});
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -14,28 +95,6 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      loadNotifications();
-      // Optional: Poll every minute? Or just load on mount.
-      // const interval = setInterval(loadNotifications, 60000);
-      // return () => clearInterval(interval);
-    }
-  }, [user]);
-
-  const loadNotifications = async () => {
-    try {
-      const res = await getProducts();
-      // Filter for stock < 5
-      const lowStock = res.data.filter(p => p.stock < 5);
-      setNotifications(lowStock);
-    } catch (error) {
-      console.error("Failed to load notifications", error);
-    }
-  };
 
   const handleLogout = async () => {
     try {
@@ -148,63 +207,7 @@ export default function Navbar() {
         {user ? (
           <div className="flex items-center gap-3">
             {/* Notification Bell */}
-            <div className="relative">
-              <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-              >
-                <Bell size={20} />
-                {notifications.length > 0 && (
-                  <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
-                    {notifications.length}
-                  </span>
-                )}
-              </button>
-
-              <AnimatePresence>
-                {showNotifications && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-[100]"
-                  >
-                    <div className="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm">Notifications</h3>
-                      <button
-                        onClick={() => setShowNotifications(false)}
-                        className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-
-                    <div className="max-h-60 overflow-y-auto">
-                      {notifications.length > 0 ? (
-                        notifications.map((product) => (
-                          <div key={product._id} className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 flex items-start gap-3 border-b border-gray-50 dark:border-gray-700/50 last:border-0 transition-colors">
-                            <div className="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-lg">
-                              <AlertTriangle size={16} />
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="text-sm font-medium text-gray-900 dark:text-white">{product.name}</h4>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                Low Stock: Only <span className="font-bold text-amber-600 dark:text-amber-400">{product.stock}</span> remaining.
-                              </p>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-4 text-center text-gray-400 dark:text-gray-500 text-sm">
-                          <Check size={24} className="mx-auto mb-2 opacity-50" />
-                          <p>All stocks are healthy!</p>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            <NotificationBell user={user} />
 
             <Link
               to="/profile"
