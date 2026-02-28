@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import InvoicePage from "./pages/InvoicePage";
 import ProductPage from "./pages/ProductPage";
@@ -16,30 +16,41 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { AnimatePresence } from "framer-motion";
 
-function AnimatedRoutes() {
+// Wrapper that keeps Layout mounted and only animates page content
+function LayoutWithAnimatedOutlet() {
   const location = useLocation();
-  const { user } = useAuth();
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        {/* Public Routes */}
-        <Route path="/" element={!user ? <Layout><LandingPage /></Layout> : <Navigate to="/dashboard" />} />
-        <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/dashboard" />} />
-        <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/dashboard" />} />
-        <Route path="/shop/:shopId" element={<PublicInventoryPage />} />
+    <Layout>
+      <AnimatePresence mode="wait">
+        <Outlet key={location.pathname} />
+      </AnimatePresence>
+    </Layout>
+  );
+}
 
-        {/* Protected Routes */}
-        <Route element={<Layout><ProtectedRoute /></Layout>}>
-          <Route path="/dashboard" element={<ProtectedRoute><InvoicePage /></ProtectedRoute>} />
-          <Route path="/products" element={<ProductPage />} />
-          <Route path="/customers" element={<ProtectedRoute><CustomerPage /></ProtectedRoute>} />
-          <Route path="/bills" element={<ProtectedRoute><BillsPage /></ProtectedRoute>} />
-          <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-        </Route>
-      </Routes>
-    </AnimatePresence>
+function AnimatedRoutes() {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  return (
+    <Routes location={location}>
+      {/* Public Routes - no shared layout */}
+      <Route path="/" element={!user ? <Layout><LandingPage /></Layout> : <Navigate to="/dashboard" />} />
+      <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/dashboard" />} />
+      <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/dashboard" />} />
+      <Route path="/shop/:shopId" element={<PublicInventoryPage />} />
+
+      {/* Protected Routes - Layout stays mounted, only page content animates */}
+      <Route element={<ProtectedRoute><LayoutWithAnimatedOutlet /></ProtectedRoute>}>
+        <Route path="/dashboard" element={<InvoicePage />} />
+        <Route path="/products" element={<ProductPage />} />
+        <Route path="/customers" element={<CustomerPage />} />
+        <Route path="/bills" element={<BillsPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Route>
+    </Routes>
   );
 }
 

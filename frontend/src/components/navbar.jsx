@@ -3,12 +3,12 @@ import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { Sun, Moon, Package, FileText, LogOut, User, Bell, AlertTriangle, X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect } from "react";
 import { getProducts } from "../api/product.api";
 
 import { logout as logoutApi } from "../api/auth.api";
 
-const NotificationBell = memo(() => {
+function NotificationBell() {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -88,7 +88,7 @@ const NotificationBell = memo(() => {
       </AnimatePresence>
     </div>
   );
-});
+}
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
