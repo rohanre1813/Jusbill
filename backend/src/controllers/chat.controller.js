@@ -9,7 +9,7 @@ const GROQ_MODEL = "llama-3.1-8b-instant"; // Free, fast Llama 3.1 model
 const getShopContext = async (shopId) => {
   const [products, invoices, purchases] = await Promise.all([
     Product.find({ shopId }).select("name price stock unit sold purchasePrice"),
-    Invoice.find({ shopId }).sort({ createdAt: -1 }).limit(50).select("invoiceId customerName grandTotal paymentStatus createdAt"),
+    Invoice.find({ shopId, isDeleted: { $ne: true } }).sort({ createdAt: -1 }).limit(50).select("invoiceId customerName grandTotal paymentStatus createdAt"),
     Purchase.find({ shopId }).sort({ createdAt: -1 }).limit(50).select("purchaseId supplierName totalAmount createdAt")
   ]);
 
