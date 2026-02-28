@@ -1,0 +1,23 @@
+name: MongoDB Backup
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight UTC
+  workflow_dispatch:       # Allows manual trigger from GitHub UI
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install mongodump
+        run: sudo apt-get install -y mongodb-database-tools
+
+      - name: Run backup
+        run: mongodump --uri="${{ secrets.MONGO_URI }}" --out=./backup
+
+      - name: Upload backup as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: ./backup
+          retention-days: 30
