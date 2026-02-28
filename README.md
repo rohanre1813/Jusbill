@@ -34,7 +34,7 @@ A modern, full-stack invoicing and inventory management solution designed for sm
 - **Email Service**: [Mailjet](https://www.mailjet.com/)
 - **Image Storage**: [Cloudinary](https://cloudinary.com/)
 - **Redis Upstash**: [for caching]
-- **AI**: [HuggingFace Inference API](https://huggingface.co/google/gemma-2-2b-it) (google/gemma-2-2b-it)
+- **AI**: [HuggingFace Inference API](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) (Mistral-7B-Instruct)
 
 ### Deployment & Infrastructure
 - **Containerization**: [Docker](https://www.docker.com/) & Docker Compose
