@@ -1,6 +1,6 @@
 # 🚀 JusBill
 
-A modern, full-stack invoicing and inventory management solution designed for small to medium-sized businesses. Features an elegant UI, real-time analytics, and automated PDF generation.
+A modern, full-stack invoicing and inventory management solution designed for small to medium-sized businesses. Features an elegant UI, AI-powered business insights, real-time analytics, and automated PDF generation.
 
 ---
 
@@ -13,6 +13,10 @@ A modern, full-stack invoicing and inventory management solution designed for sm
 - **🎨 Multi-Theme Support**: Sleek, responsive design with beautiful dark and light modes.
 - **🔒 Secure Authentication**: JWT-based session management with secure cookies.
 - **📱 Responsive UI**: Fully optimized for mobile, tablet, and desktop views.
+- **🛒 Purchase Tracking**: Track supplier purchases with per-shop sequential IDs.
+- **🤖 AI Business Assistant**: Ask questions about your sales, purchases, and inventory using Gemini AI.
+- **🔔 Smart Notifications**: Low stock alerts that update only when stock changes.
+- **💾 Automated DB Backup**: Weekly MongoDB backups via GitHub Actions.
 
 ## 🛠️ Tech Stack
 
@@ -30,6 +34,7 @@ A modern, full-stack invoicing and inventory management solution designed for sm
 - **Email Service**: [Mailjet](https://www.mailjet.com/)
 - **Image Storage**: [Cloudinary](https://cloudinary.com/)
 - **Redis Upstash**: [for caching]
+- **AI**: [Google Gemini API](https://aistudio.google.com/)
 
 ### Deployment & Infrastructure
 - **Containerization**: [Docker](https://www.docker.com/) & Docker Compose
@@ -50,6 +55,7 @@ A modern, full-stack invoicing and inventory management solution designed for sm
    - `CLOUDINARY_*`: Your Cloudinary credentials for image storage.
    - `MAILJET_API_KEY` & `MAILJET_SECRET_KEY`: Credentials from Mailjet for sending emails.
    - `FROM_EMAIL`: Your verified sender email address on Mailjet.
+   - `GEMINI_API_KEY`: Your Google Gemini API key for the AI assistant.
 
 ### Running the Application
 

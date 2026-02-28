@@ -8,6 +8,7 @@ import { generateInvoicePDF } from "../utils/pdfGenerator";
 
 export default function BillsPage() {
   const [allInvoices, setAllInvoices] = useState([]);
+  const [stats, setStats] = useState({ totalSales: 0, totalReceived: 0, totalPending: 0 });
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
@@ -46,7 +47,8 @@ export default function BillsPage() {
     setLoading(true);
     try {
       const res = await getInvoices();
-      setAllInvoices(res.data);
+      setAllInvoices(res.data.invoices);
+      setStats(res.data.stats);
     } catch (error) {
       toast.error("Failed to fetch bills");
     } finally {
@@ -119,9 +121,9 @@ export default function BillsPage() {
     generateInvoicePDF(invoiceData, "download");
   };
 
-  const totalSales = filteredInvoices.reduce((acc, curr) => acc + (curr.grandTotal || 0), 0);
-  const totalReceived = filteredInvoices.reduce((acc, curr) => curr.paymentStatus === "Paid" ? acc + (curr.grandTotal || 0) : acc, 0);
-  const totalPending = filteredInvoices.reduce((acc, curr) => curr.paymentStatus !== "Paid" ? acc + (curr.grandTotal || 0) : acc, 0);
+  const totalSales = stats.totalSales;
+  const totalReceived = stats.totalReceived;
+  const totalPending = stats.totalPending;
 
   return (
     <motion.div
@@ -283,13 +285,15 @@ export default function BillsPage() {
                           {invoice.paymentStatus === "Paid" ? <CheckCircle size={10} /> : <XCircle size={10} />}
                           {invoice.paymentStatus || "Unpaid"}
                         </button>
-                        <button
-                          onClick={() => handleDelete(invoice._id)}
-                          className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors ml-2"
-                          title="Delete Invoice"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        {invoice.paymentStatus !== "Paid" && (
+                          <button
+                            onClick={() => handleDelete(invoice._id)}
+                            className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors ml-2"
+                            title="Delete Invoice"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
                         <Calendar size={14} />

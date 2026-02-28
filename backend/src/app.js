@@ -10,6 +10,7 @@ import invoiceRoutes from "./routes/invoice.routes.js";
 import customerRoutes from "./routes/customer.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import purchaseRoutes from "./routes/purchase.routes.js";
+import chatRoutes from "./routes/chat.routes.js";
 
 dotenv.config({ path: "./.env" });
 connectDB();
@@ -44,5 +45,6 @@ app.use("/invoice", invoiceRoutes);
 app.use("/customers", customerRoutes);
 app.use("/users", userRoutes);
 app.use("/purchases", purchaseRoutes);
+app.use("/chat", chatRoutes);
 
 export default app;

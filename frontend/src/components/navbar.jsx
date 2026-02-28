@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
-import { Sun, Moon, Package, FileText, LogOut, User, Bell, AlertTriangle, X, Check } from "lucide-react";
+import { Sun, Moon, Package, FileText, LogOut, User, Bell, AlertTriangle, X, Check, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { getProducts } from "../api/product.api";
@@ -207,6 +207,22 @@ export default function Navbar() {
                 />
               )}
             </Link>
+
+            <Link
+              to="/chat"
+              className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive("/chat") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                }`}
+            >
+              <Sparkles size={18} />
+              <span>AI</span>
+              {isActive("/chat") && (
+                <motion.div
+                  layoutId="nav-pill"
+                  className="absolute inset-0 bg-white dark:bg-gray-700 shadow-sm rounded-lg -z-10"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+            </Link>
           </div>
         )}
 
@@ -320,6 +336,14 @@ export default function Navbar() {
             >
               <FileText size={20} />
               <span className="text-[10px] font-medium">Reports</span>
+            </Link>
+
+            <Link
+              to="/chat"
+              className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-shrink-0 ${isActive("/chat") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"}`}
+            >
+              <Sparkles size={20} />
+              <span className="text-[10px] font-medium">AI</span>
             </Link>
 
             <Link

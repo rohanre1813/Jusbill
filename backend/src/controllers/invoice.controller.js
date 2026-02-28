@@ -110,14 +110,25 @@ export const getInvoices = async (req, res) => {
 
     const invoices = await Invoice.find(query).sort({ createdAt: -1 });
 
+    // Compute stats from ALL invoices (including deleted) for accurate totals
+    const allInvoices = await Invoice.find({ shopId: req.user.shopId }).select("grandTotal paymentStatus");
+    let totalSales = 0, totalReceived = 0, totalPending = 0;
+    for (const inv of allInvoices) {
+      totalSales += inv.grandTotal || 0;
+      if (inv.paymentStatus === "Paid") totalReceived += inv.grandTotal || 0;
+      else totalPending += inv.grandTotal || 0;
+    }
+
+    const response = { invoices, stats: { totalSales, totalReceived, totalPending } };
+
     try {
-      await redis.set(cacheKey, invoices, { ex: 300 });
+      await redis.set(cacheKey, response, { ex: 300 });
       console.log("Redis Cache Miss: invoices. Cached result.");
     } catch (redisError) {
       console.error("Redis Set Error (invoices):", redisError.message);
     }
 
-    res.json(invoices);
+    res.json(response);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch invoices" });
   }

@@ -6,6 +6,7 @@ import CustomerPage from "./pages/CustomerPage";
 import BillsPage from "./pages/BillsPage";
 import ReportsPage from "./pages/ReportsPage";
 import ProfilePage from "./pages/ProfilePage";
+import ChatPage from "./pages/ChatPage";
 import LandingPage from "./pages/LandingPage";
 import PublicInventoryPage from "./pages/PublicInventoryPage";
 import LoginPage from "./pages/LoginPage";
@@ -49,6 +50,7 @@ function AnimatedRoutes() {
         <Route path="/bills" element={<BillsPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/chat" element={<ChatPage />} />
       </Route>
     </Routes>
   );
