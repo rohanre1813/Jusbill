@@ -46,7 +46,7 @@ export const createInvoice = async (req, res) => {
     const gst = subtotalAfterDiscount * (gstRate / 100);
 
     const counter = await Counter.findOneAndUpdate(
-      { shopId: req.user.shopId },
+      { shopId: req.user.shopId, type: "invoice" },
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );

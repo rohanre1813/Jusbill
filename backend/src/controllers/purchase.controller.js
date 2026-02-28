@@ -4,13 +4,18 @@ import { sendEmailWithAttachment } from "../utils/emailService.js";
 import PDFDocument from "pdfkit";
 import { redis, getKey } from "../config/redis.js";
 import { clearCache } from "../middleware/cache.js";
+import Counter from "../models/counter.js";
 
 export const createPurchase = async (req, res) => {
   try {
     const { items, supplierName, totalAmount } = req.body;
 
-    const count = await Purchase.countDocuments({ shopId: req.user.shopId });
-    const purchaseId = `PUR-${String(count + 1).padStart(4, '0')}`;
+    const counter = await Counter.findOneAndUpdate(
+      { shopId: req.user.shopId, type: "purchase" },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true }
+    );
+    const purchaseId = `PUR-${String(counter.seq).padStart(4, '0')}`;
 
     const purchase = await Purchase.create({
       shopId: req.user.shopId,
@@ -29,7 +34,7 @@ export const createPurchase = async (req, res) => {
       }
     }
 
-    await purchase.save();
+
     try {
       await clearCache(`purchases:${req.user.shopId}`);
       await clearCache(`products:${req.user.shopId}`);

@@ -287,6 +287,7 @@ export default function InvoicePage() {
       price: r.price,
       qty: r.qty
     })),
+    
     subtotal,
     discount,
     discountAmount,
