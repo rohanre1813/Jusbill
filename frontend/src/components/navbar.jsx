@@ -8,7 +8,8 @@ import { getProducts } from "../api/product.api";
 
 import { logout as logoutApi } from "../api/auth.api";
 
-const NotificationBell = memo(({ user }) => {
+const NotificationBell = memo(() => {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -16,7 +17,7 @@ const NotificationBell = memo(({ user }) => {
     if (user) {
       loadNotifications();
     }
-  }, [user]);
+  }, []);
 
   const loadNotifications = async () => {
     try {
@@ -207,7 +208,7 @@ export default function Navbar() {
         {user ? (
           <div className="flex items-center gap-3">
             {/* Notification Bell */}
-            <NotificationBell user={user} />
+            <NotificationBell />
 
             <Link
               to="/profile"

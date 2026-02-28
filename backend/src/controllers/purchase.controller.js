@@ -89,6 +89,13 @@ export const deletePurchase = async (req, res) => {
     }
 
     await Purchase.findByIdAndDelete(id);
+
+    // Decrement purchase counter so next purchase reuses the freed ID
+    await Counter.findOneAndUpdate(
+      { shopId: req.user.shopId, type: "purchase" },
+      { $inc: { seq: -1 } }
+    );
+
     try {
       await clearCache(`purchases:${req.user.shopId}`);
       await clearCache(`products:${req.user.shopId}`);
