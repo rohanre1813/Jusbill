@@ -17,7 +17,10 @@ export function AuthProvider({ children }) {
       const res = await verifyApi();
       setUser(res.data);
     } catch (error) {
-      setUser(null);
+      // Only log out on a real 401 — not on network errors/timeouts (e.g. Render cold start)
+      if (error.response?.status === 401) {
+        setUser(null);
+      }
     } finally {
       setLoading(false);
     }
