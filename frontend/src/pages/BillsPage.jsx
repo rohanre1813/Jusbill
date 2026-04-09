@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, FileText, Calendar, User, Download, CheckCircle, XCircle, Trash2, Bell, Filter } from "lucide-react";
 import toast from "react-hot-toast";
 import { generateInvoicePDF } from "../utils/pdfGenerator";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function BillsPage() {
   const [allInvoices, setAllInvoices] = useState([]);
@@ -386,7 +387,9 @@ export default function BillsPage() {
         )}
 
         {loading && (
-          <div className="text-center py-12 text-gray-500">Loading bills...</div>
+          <div className="py-16 flex justify-center">
+            <LoadingSpinner size="md" label="Loading bills..." />
+          </div>
         )}
       </div>
     </motion.div>

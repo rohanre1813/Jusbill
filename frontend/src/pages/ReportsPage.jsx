@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { getPurchases, deletePurchase, sendPurchaseReport } from "../api/purchase.api";
 import { getProfile } from "../api/user.api";
 import { createPortal } from "react-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 
 const ProductSelect = ({ products, value, onChange }) => {
@@ -513,6 +514,15 @@ export default function ReportsPage() {
                   </td>
                 </tr>
               ))}
+              {loading && (
+                <tr>
+                  <td colSpan="6" className="px-6 py-16">
+                    <div className="flex justify-center">
+                      <LoadingSpinner size="md" label="Loading purchases..." />
+                    </div>
+                  </td>
+                </tr>
+              )}
               {!loading && purchaseHistory.length === 0 && (
                 <tr>
                   <td colSpan="6" className="px-6 py-12 text-center text-gray-400">

@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { getPublicProducts } from "../api/product.api";
 import { motion } from "framer-motion";
 import { Package, ArrowLeft, Search } from "lucide-react";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function PublicInventoryPage() {
   const { shopId } = useParams();
@@ -34,7 +35,7 @@ export default function PublicInventoryPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-950">
-        <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+        <LoadingSpinner size="lg" label="Loading inventory..." />
       </div>
     );
   }

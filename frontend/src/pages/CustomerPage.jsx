@@ -4,6 +4,7 @@ import { Plus, Search, User, Phone, MapPin, FileText, Mail, Pencil, X, Trash2 } 
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { addCustomer, getCustomers, updateCustomer, deleteCustomer } from "../api/customer.api";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function CustomerPage() {
   const [customers, setCustomers] = useState([]);
@@ -268,6 +269,12 @@ export default function CustomerPage() {
             </motion.div>
           ))}
         </div>
+
+        {loading && (
+          <div className="flex justify-center py-16">
+            <LoadingSpinner size="md" label="Loading customers..." />
+          </div>
+        )}
 
         {filteredCustomers.length === 0 && !loading && (
           <div className="text-center py-12 text-gray-500 dark:text-gray-400">

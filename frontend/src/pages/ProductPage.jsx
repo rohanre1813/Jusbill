@@ -7,6 +7,7 @@ import { Package, Plus, Layers, Pencil, Trash2, X, Check, Search, IndianRupee, B
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Rectangle, Pie, Cell, Legend, PieChart } from 'recharts';
 import toast from "react-hot-toast";
 import { createPortal } from "react-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c', '#d0ed57', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c'];
 
@@ -320,7 +321,11 @@ export default function ProductPage() {
                 ))}
               </AnimatePresence>
 
-              {loading && <div className="col-span-full text-center py-12 text-gray-500">Loading products...</div>}
+              {loading && (
+                <div className="col-span-full flex justify-center py-16">
+                  <LoadingSpinner size="md" label="Loading products..." />
+                </div>
+              )}
 
               {!loading && filteredProducts.length === 0 && (
                 <div className="col-span-full flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 text-center">
