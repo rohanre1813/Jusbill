@@ -8,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import toast from "react-hot-toast";
 import { createPortal } from "react-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { getCached, setCached, invalidateCache } from "../utils/dataCache";
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c', '#d0ed57', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c'];
 
@@ -32,6 +33,29 @@ export default function ProductPage() {
     price: "",
   });
 
+  // --- Effect 1: Load products immediately (no dependency on profile) ---
+  // Uses stale-while-revalidate: cached data shows instantly, fresh data replaces it.
+  useEffect(() => {
+    const stale = getCached('products');
+    if (stale) {
+      setProducts(stale);
+      setLoading(false); // Show stale data without spinner
+    }
+
+    getProducts()
+      .then(res => {
+        setProducts(res.data);
+        setCached('products', res.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!stale) toast.error("Failed to load products");
+        setLoading(false);
+      });
+  }, []);
+
+  // --- Effect 2: Load profile to get shop's createdAt (sets analytics date range) ---
+  // Runs in parallel with Effect 1 — products are NOT blocked by this.
   useEffect(() => {
     getProfile()
       .then(res => {
@@ -40,58 +64,42 @@ export default function ProductPage() {
             ...prev,
             startDate: new Date(res.data.createdAt).toISOString().split('T')[0]
           }));
-        } else {
-          load();
         }
       })
-      .catch(() => load());
+      .catch(() => {
+        // If profile fails, leave dateRange as-is; analytics won't fire (startDate is empty)
+      });
   }, []);
 
+  // --- Effect 3: Load/reload analytics whenever the date range changes ---
+  // Triggered by: (a) profile setting startDate on mount, (b) user changing date inputs.
   useEffect(() => {
-    if (dateRange.startDate) load();
+    if (!dateRange.startDate) return;
+    getTopSellingProducts({ fromDate: dateRange.startDate, toDate: dateRange.endDate })
+      .then(res => setAnalyticsData(res.data))
+      .catch(() => console.warn("Analytics failed to load"));
   }, [dateRange]);
 
-  const load = async () => {
-    // Start fetching everything in parallel
-    const prodPromise = getProducts();
-    const analyticsPromise = getTopSellingProducts({
-      fromDate: dateRange.startDate,
-      toDate: dateRange.endDate
-    });
-
-    // 1. Load products first to make the page interactive
-    prodPromise.then(res => {
-      setProducts(res.data);
-      setLoading(false);
-    }).catch(() => {
-      toast.error("Failed to load products");
-      setLoading(false);
-    });
-
-    // 2. Load analytics in the background
-    analyticsPromise.then(res => {
-      setAnalyticsData(res.data);
-    }).catch(() => {
-      console.warn("Analytics failed to load");
-    });
+  // Shared reload helper for after mutations (add/edit/delete product)
+  const reloadProducts = () => {
+    invalidateCache('products');
+    getProducts()
+      .then(res => {
+        setProducts(res.data);
+        setCached('products', res.data);
+      })
+      .catch(() => toast.error("Failed to reload products"));
   };
 
   const handleAdd = async () => {
     if (!form.name || !form.price) return toast.error("Name and Price are required");
 
     try {
-      // Default stock and purchasePrice to 0 explicitly
       await createProduct({ ...form, stock: 0, purchasePrice: 0 });
       toast.success("Product added successfully!");
       window.dispatchEvent(new Event("stock-changed"));
-
-      setForm({
-        name: "",
-        price: "",
-        unit: "",
-      });
-
-      load();
+      setForm({ name: "", price: "", unit: "" });
+      reloadProducts();
     } catch (error) {
       toast.error("Failed to add product");
     }
@@ -115,7 +123,7 @@ export default function ProductPage() {
       toast.success("Product updated successfully");
       window.dispatchEvent(new Event("stock-changed"));
       setEditingId(null);
-      load();
+      reloadProducts();
     } catch (error) {
       console.error(error);
       toast.error("Failed to update product");
@@ -128,7 +136,7 @@ export default function ProductPage() {
       await deleteProduct(id);
       toast.success("Product deleted successfully");
       window.dispatchEvent(new Event("stock-changed"));
-      load();
+      reloadProducts();
     } catch (error) {
       console.error(error);
       toast.error("Failed to delete product");

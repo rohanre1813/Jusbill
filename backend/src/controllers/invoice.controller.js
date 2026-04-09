@@ -73,8 +73,10 @@ export const createInvoice = async (req, res) => {
     });
 
     try {
-      await clearCache(`invoices:${req.user.shopId}`);
-      await clearCache(`products:${req.user.shopId}`);
+      // Fire cache invalidation non-blocking — don't await, don't slow down the response
+      clearCache(`invoices:${req.user.shopId}`).catch(() => {});
+      clearCache(`products:${req.user.shopId}`).catch(() => {});
+      clearCache(`analytics:${req.user.shopId}`).catch(() => {});
     } catch (redisError) {
       console.error("Redis Clear Error (createInvoice):", redisError.message);
     }
@@ -108,18 +110,31 @@ export const getInvoices = async (req, res) => {
       ];
     }
 
-    const invoices = await Invoice.find(query).sort({ createdAt: -1 });
+    // Run both queries in parallel — stats via aggregation (no large doc fetch)
+    const [invoices, [statsResult]] = await Promise.all([
+      Invoice.find(query).sort({ createdAt: -1 }),
+      Invoice.aggregate([
+        { $match: { shopId: req.user.shopId, isDeleted: { $ne: true } } },
+        {
+          $group: {
+            _id: null,
+            totalSales: { $sum: "$grandTotal" },
+            totalReceived: {
+              $sum: { $cond: [{ $eq: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
+            },
+            totalPending: {
+              $sum: { $cond: [{ $ne: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
+            }
+          }
+        }
+      ])
+    ]);
 
-    // Compute stats from non-deleted invoices only (deleted invoices revert stock and don't count)
-    const allInvoices = await Invoice.find({ shopId: req.user.shopId, isDeleted: { $ne: true } }).select("grandTotal paymentStatus");
-    let totalSales = 0, totalReceived = 0, totalPending = 0;
-    for (const inv of allInvoices) {
-      totalSales += inv.grandTotal || 0;
-      if (inv.paymentStatus === "Paid") totalReceived += inv.grandTotal || 0;
-      else totalPending += inv.grandTotal || 0;
-    }
+    const stats = statsResult
+      ? { totalSales: statsResult.totalSales, totalReceived: statsResult.totalReceived, totalPending: statsResult.totalPending }
+      : { totalSales: 0, totalReceived: 0, totalPending: 0 };
 
-    const response = { invoices, stats: { totalSales, totalReceived, totalPending } };
+    const response = { invoices, stats };
 
     try {
       await redis.set(cacheKey, response, { ex: 300 });
@@ -180,12 +195,10 @@ export const deleteInvoice = async (req, res) => {
     invoice.isDeleted = true;
     await invoice.save();
 
-    try {
-      await clearCache(`invoices:${req.user.shopId}`);
-      await clearCache(`products:${req.user.shopId}`);
-    } catch (redisError) {
-      console.error("Redis Clear Error (deleteInvoice):", redisError.message);
-    }
+    // Fire cache invalidation non-blocking
+    clearCache(`invoices:${req.user.shopId}`).catch(() => {});
+    clearCache(`products:${req.user.shopId}`).catch(() => {});
+    clearCache(`analytics:${req.user.shopId}`).catch(() => {});
 
     res.json({ message: "Invoice deleted and stock reverted successfully" });
   } catch (error) {
@@ -224,6 +237,7 @@ export const sendInvoiceEmail = async (req, res) => {
     res.status(500).json({ message: "Failed to send email", error: error.message });
   }
 };
+
 
 export const sendSalesReport = async (req, res) => {
   try {

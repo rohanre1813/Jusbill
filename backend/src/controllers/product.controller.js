@@ -16,11 +16,8 @@ export const createProduct = async (req, res) => {
     });
 
     await product.save();
-    try {
-      await clearCache(`products:${shopId}`);
-    } catch (redisError) {
-      console.error("Redis Clear Error (createProduct):", redisError.message);
-    }
+    // Non-blocking — don't delay the response waiting for Redis
+    clearCache(`products:${shopId}`).catch(() => {});
     res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: "Failed to create product" });
@@ -104,12 +101,9 @@ export const updateProduct = async (req, res) => {
 
     if (!product) return res.status(404).json({ message: "Product not found" });
 
-    try {
-      await clearCache(`products:${req.user.shopId}`);
-      await redis.del(getKey(`product:${req.params.id}`));
-    } catch (redisError) {
-      console.error("Redis Clear/Del Error (updateProduct):", redisError.message);
-    }
+    // Non-blocking cache invalidation
+    clearCache(`products:${req.user.shopId}`).catch(() => {});
+    redis.del(getKey(`product:${req.params.id}`)).catch(() => {});
 
     res.json(product);
   } catch (error) {
@@ -122,12 +116,9 @@ export const deleteProduct = async (req, res) => {
     const product = await Product.findOneAndDelete({ _id: req.params.id, shopId: req.user.shopId });
     if (!product) return res.status(404).json({ message: "Product not found" });
 
-    try {
-      await clearCache(`products:${req.user.shopId}`);
-      await redis.del(getKey(`product:${req.params.id}`));
-    } catch (redisError) {
-      console.error("Redis Clear/Del Error (deleteProduct):", redisError.message);
-    }
+    // Non-blocking cache invalidation
+    clearCache(`products:${req.user.shopId}`).catch(() => {});
+    redis.del(getKey(`product:${req.params.id}`)).catch(() => {});
 
     res.json({ message: "Product deleted successfully" });
   } catch (error) {
@@ -154,6 +145,18 @@ export const getPublicProducts = async (req, res) => {
 export const getTopSellingProducts = async (req, res) => {
   try {
     const { fromDate, toDate } = req.query;
+    const cacheKey = getKey(`analytics:${req.user.shopId}:${fromDate || "all"}:${toDate || "all"}`);
+
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        console.log("Redis Cache Hit: analytics");
+        return res.json(cached);
+      }
+    } catch (redisError) {
+      console.error("Redis Get Error (analytics):", redisError.message);
+    }
+
     const matchStage = { shopId: req.user.shopId, isDeleted: { $ne: true } };
 
     if (fromDate && toDate) {
@@ -177,6 +180,13 @@ export const getTopSellingProducts = async (req, res) => {
       },
       { $sort: { sold: -1 } }
     ]);
+
+    try {
+      await redis.set(cacheKey, stats, { ex: 600 }); // 10-min TTL for analytics
+      console.log("Redis Cache Miss: analytics. Cached result.");
+    } catch (redisError) {
+      console.error("Redis Set Error (analytics):", redisError.message);
+    }
 
     res.json(stats);
   } catch (error) {

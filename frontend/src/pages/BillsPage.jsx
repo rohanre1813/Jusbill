@@ -6,6 +6,7 @@ import { Search, FileText, Calendar, User, Download, CheckCircle, XCircle, Trash
 import toast from "react-hot-toast";
 import { generateInvoicePDF } from "../utils/pdfGenerator";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { getCached, setCached, invalidateCache } from "../utils/dataCache";
 
 export default function BillsPage() {
   const [allInvoices, setAllInvoices] = useState([]);
@@ -45,13 +46,23 @@ export default function BillsPage() {
   }, []);
 
   const fetchInvoices = async () => {
-    setLoading(true);
+    // Stale-while-revalidate: show cached data instantly, then refresh
+    const stale = getCached('invoices');
+    if (stale) {
+      setAllInvoices(stale.invoices);
+      setStats(stale.stats);
+      // Don't show spinner if we have something to display
+    } else {
+      setLoading(true);
+    }
+
     try {
       const res = await getInvoices();
       setAllInvoices(res.data.invoices);
       setStats(res.data.stats);
+      setCached('invoices', res.data);
     } catch (error) {
-      toast.error("Failed to fetch bills");
+      if (!stale) toast.error("Failed to fetch bills");
     } finally {
       setLoading(false);
     }
@@ -77,6 +88,7 @@ export default function BillsPage() {
     setAllInvoices(prev => prev.map(inv =>
       inv._id === invoice._id ? { ...inv, paymentStatus: newStatus } : inv
     ));
+    invalidateCache('invoices'); // keep client cache in sync
 
     try {
       await updateInvoiceStatus(invoice._id, newStatus);
@@ -96,6 +108,7 @@ export default function BillsPage() {
     try {
       await deleteInvoice(id);
       setAllInvoices(prev => prev.filter(inv => inv._id !== id));
+      invalidateCache('invoices'); // keep client cache in sync
       toast.success("Invoice deleted successfully");
     } catch (error) {
       toast.error("Failed to delete invoice");
