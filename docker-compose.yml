@@ -33,6 +33,7 @@ services:
       target: development
     container_name: jusbill-backend-dev
     restart: unless-stopped
+    image: rohanre1813/jusbill:latest
     ports:
       - "5000:5000"
     environment:
