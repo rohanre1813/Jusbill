@@ -16,8 +16,11 @@ x-backend-env: &backend-env
   CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
   CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
   CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-  EMAIL_USER: ${EMAIL_USER}
-  EMAIL_PASS: ${EMAIL_PASS}
+  FROM_EMAIL: ${FROM_EMAIL}
+  MAILJET_API_KEY: ${MAILJET_API_KEY}
+  MAILJET_SECRET_KEY: ${MAILJET_SECRET_KEY}
+  RESEND_API_KEY: ${RESEND_API_KEY}
+  GROQ_API_KEY: ${GROQ_API_KEY}
   UPSTASH_REDIS_REST_URL: ${UPSTASH_REDIS_REST_URL}
   UPSTASH_REDIS_REST_TOKEN: ${UPSTASH_REDIS_REST_TOKEN}
 
@@ -39,6 +42,8 @@ services:
     environment:
       <<: *backend-env
       NODE_ENV: development
+      # Allow local frontend in dev; overrides the production ALLOWED_ORIGINS from .env
+      ALLOWED_ORIGINS: http://localhost:5173
     volumes:
       # Hot-reload: mount source, exclude node_modules
       - ./backend:/app
@@ -92,6 +97,7 @@ services:
     environment:
       <<: *backend-env
       NODE_ENV: production
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
