@@ -4,8 +4,20 @@ import { login as loginApi, register as registerApi, logout as logoutApi, verify
 
 const AuthContext = createContext();
 
+const STORAGE_KEY = "jusbill_user";
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  // Seed state from localStorage so there is no login flash on reload
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+  // If we already have a cached user we can start with loading=false;
+  // the background verify will silently revalidate.
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,12 +27,16 @@ export function AuthProvider({ children }) {
   const checkUser = async () => {
     try {
       const res = await verifyApi();
-      setUser(res.data);
+      const userData = res.data;
+      setUser(userData);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
     } catch (error) {
-      // Only log out on a real 401 — not on network errors/timeouts (e.g. Render cold start)
+      // Only clear session on a real 401 — not on network errors / cold starts
       if (error.response?.status === 401) {
         setUser(null);
+        localStorage.removeItem(STORAGE_KEY);
       }
+      // On network errors we keep the cached user so a temp outage doesn't log you out
     } finally {
       setLoading(false);
     }
@@ -28,13 +44,17 @@ export function AuthProvider({ children }) {
 
   const login = async (data) => {
     const res = await loginApi(data);
-    setUser(res.data.user);
+    const userData = res.data.user;
+    setUser(userData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
     return res;
   };
 
   const register = async (data) => {
     const res = await registerApi(data);
-    setUser(res.data.user);
+    const userData = res.data.user;
+    setUser(userData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
     return res;
   };
 
@@ -45,6 +65,7 @@ export function AuthProvider({ children }) {
       console.error("Logout failed", error);
     }
     setUser(null);
+    localStorage.removeItem(STORAGE_KEY);
   };
 
   return (
