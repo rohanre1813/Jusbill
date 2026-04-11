@@ -74,9 +74,9 @@ export const createInvoice = async (req, res) => {
 
     try {
       // Fire cache invalidation non-blocking — don't await, don't slow down the response
-      clearCache(`invoices:${req.user.shopId}`).catch(() => {});
-      clearCache(`products:${req.user.shopId}`).catch(() => {});
-      clearCache(`analytics:${req.user.shopId}`).catch(() => {});
+      clearCache(`invoices:${req.user.shopId}`).catch(() => { });
+      clearCache(`products:${req.user.shopId}`).catch(() => { });
+      clearCache(`analytics:${req.user.shopId}`).catch(() => { });
     } catch (redisError) {
       console.error("Redis Clear Error (createInvoice):", redisError.message);
     }
@@ -196,9 +196,9 @@ export const deleteInvoice = async (req, res) => {
     await invoice.save();
 
     // Fire cache invalidation non-blocking
-    clearCache(`invoices:${req.user.shopId}`).catch(() => {});
-    clearCache(`products:${req.user.shopId}`).catch(() => {});
-    clearCache(`analytics:${req.user.shopId}`).catch(() => {});
+    clearCache(`invoices:${req.user.shopId}`).catch(() => { });
+    clearCache(`products:${req.user.shopId}`).catch(() => { });
+    clearCache(`analytics:${req.user.shopId}`).catch(() => { });
 
     res.json({ message: "Invoice deleted and stock reverted successfully" });
   } catch (error) {

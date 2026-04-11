@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getInvoices, updateInvoiceStatus, deleteInvoice, sendSalesReport, sendInvoiceEmail } from "../api/invoice.api";
 import { getProfile } from "../api/user.api";
+import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, FileText, Calendar, User, Download, CheckCircle, XCircle, Trash2, Bell, Filter } from "lucide-react";
 import toast from "react-hot-toast";
@@ -9,16 +10,18 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { getCached, setCached, invalidateCache } from "../utils/dataCache";
 
 export default function BillsPage() {
+  const { user } = useAuth();
   const [allInvoices, setAllInvoices] = useState([]);
   const [stats, setStats] = useState({ totalSales: 0, totalReceived: 0, totalPending: 0 });
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
 
-  const [dateRange, setDateRange] = useState({
-    startDate: "",
+  const [dateRange, setDateRange] = useState(() => ({
+    // Use account creation date from AuthContext (already loaded) as default from-date
+    startDate: user?.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : "",
     endDate: new Date().toISOString().split('T')[0]
-  });
+  }));
 
   const [clearing, setClearing] = useState(false);
 
@@ -73,12 +76,14 @@ export default function BillsPage() {
       (invoice.customerName && invoice.customerName.toLowerCase().includes(search.toLowerCase()));
 
     const invDate = new Date(invoice.createdAt);
-    const start = new Date(dateRange.startDate);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(dateRange.endDate);
-    end.setHours(23, 59, 59, 999);
+    const start = dateRange.startDate ? new Date(dateRange.startDate) : null;
+    const end = dateRange.endDate ? new Date(dateRange.endDate) : null;
+    if (start) start.setHours(0, 0, 0, 0);
+    if (end) end.setHours(23, 59, 59, 999);
+    if (start && invDate < start) return false;
+    if (end && invDate > end) return false;
 
-    return matchSearch && invDate >= start && invDate <= end;
+    return matchSearch;
   });
 
   const handleStatusToggle = async (invoice) => {

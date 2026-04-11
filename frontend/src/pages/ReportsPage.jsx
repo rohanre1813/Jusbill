@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { getProducts } from "../api/product.api";
 import { createPurchase } from "../api/purchase.api";
+import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Plus, Trash2, Save, FileText, ShoppingCart, Calendar, Check, X, ChevronDown } from "lucide-react";
 import toast from "react-hot-toast";
@@ -147,16 +148,18 @@ const ProductSelect = ({ products, value, onChange }) => {
 };
 
 export default function ReportsPage() {
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [rows, setRows] = useState([]);
   const [supplierName, setSupplierName] = useState("");
   const [loading, setLoading] = useState(true);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
 
-  const [dateRange, setDateRange] = useState({
-    startDate: "",
+  const [dateRange, setDateRange] = useState(() => ({
+    // Use account creation date from AuthContext (already loaded) as default from-date
+    startDate: user?.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : "",
     endDate: new Date().toISOString().split('T')[0]
-  });
+  }));
 
   useEffect(() => {
     loadData();

@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { getProducts, createProduct, updateProduct, deleteProduct, getTopSellingProducts } from "../api/product.api";
-import { getProfile } from "../api/user.api";
+import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Package, Plus, Layers, Pencil, Trash2, X, Check, Search, IndianRupee, BarChart3, PieChart as PieChartIcon } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Rectangle, Pie, Cell, Legend, PieChart } from 'recharts';
@@ -13,14 +13,16 @@ import { getCached, setCached, invalidateCache } from "../utils/dataCache";
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c', '#d0ed57', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c'];
 
 export default function ProductPage() {
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [analyticsData, setAnalyticsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [dateRange, setDateRange] = useState({
-    startDate: "",
+  const [dateRange, setDateRange] = useState(() => ({
+    // Use account creation date from AuthContext (already loaded) as default from-date
+    startDate: user?.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : "",
     endDate: new Date().toISOString().split('T')[0]
-  });
+  }));
 
   const [form, setForm] = useState({
     name: "",
@@ -54,25 +56,7 @@ export default function ProductPage() {
       });
   }, []);
 
-  // --- Effect 2: Load profile to get shop's createdAt (sets analytics date range) ---
-  // Runs in parallel with Effect 1 — products are NOT blocked by this.
-  useEffect(() => {
-    getProfile()
-      .then(res => {
-        if (res.data?.createdAt) {
-          setDateRange(prev => ({
-            ...prev,
-            startDate: new Date(res.data.createdAt).toISOString().split('T')[0]
-          }));
-        }
-      })
-      .catch(() => {
-        // If profile fails, leave dateRange as-is; analytics won't fire (startDate is empty)
-      });
-  }, []);
-
-  // --- Effect 3: Load/reload analytics whenever the date range changes ---
-  // Triggered by: (a) profile setting startDate on mount, (b) user changing date inputs.
+  // --- Effect 2: Load/reload analytics whenever the date range changes ---
   useEffect(() => {
     if (!dateRange.startDate) return;
     getTopSellingProducts({ fromDate: dateRange.startDate, toDate: dateRange.endDate })
