@@ -71,6 +71,9 @@ export const logout = (req, res) => {
 export const verifyUser = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ msg: "Not authorized" });
+    // Prevent browser caching — a stale 304 with no CORS headers causes
+    // cross-origin failures that silently log users out on reload
+    res.setHeader("Cache-Control", "no-store, max-age=0");
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
   } catch (error) {
