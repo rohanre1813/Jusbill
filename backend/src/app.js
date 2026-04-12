@@ -39,12 +39,15 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-app.use("/auth", authRoutes);
-app.use("/products", productRoutes);
-app.use("/invoice", invoiceRoutes);
-app.use("/customers", customerRoutes);
-app.use("/users", userRoutes);
-app.use("/purchases", purchaseRoutes);
-app.use("/chat", chatRoutes);
+const apiRouter = express.Router();
+apiRouter.use("/auth", authRoutes);
+apiRouter.use("/products", productRoutes);
+apiRouter.use("/invoice", invoiceRoutes);
+apiRouter.use("/customers", customerRoutes);
+apiRouter.use("/users", userRoutes);
+apiRouter.use("/purchases", purchaseRoutes);
+apiRouter.use("/chat", chatRoutes);
+
+app.use("/api", apiRouter);
 
 export default app;

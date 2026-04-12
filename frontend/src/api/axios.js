@@ -6,6 +6,10 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
+  // Automatically namespace API requests so they don't clash with React Router page URLs
+  if (config.url && config.url.startsWith("/") && !config.url.startsWith("/api")) {
+    config.url = `/api${config.url}`;
+  }
   return config;
 });
 

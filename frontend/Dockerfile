@@ -52,7 +52,7 @@ RUN printf 'server {\n\
     listen 80;\n\
     root /usr/share/nginx/html;\n\
     index index.html;\n\
-    location ~ ^/(auth|products|invoice|customers|users|purchases|chat) {\n\
+    location /api/ {\n\
         proxy_pass http://jusbill-backend:5000;\n\
         proxy_http_version 1.1;\n\
         proxy_set_header Upgrade $http_upgrade;\n\
