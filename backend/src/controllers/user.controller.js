@@ -10,12 +10,12 @@ export const updateProfile = async (req, res) => {
       if (req.files.qrCode) updates.qrCode = req.files.qrCode[0].path;
     }
 
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, { new: true }).select("-password");
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, updates, { new: true }).select("-password");
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
 
     // Invalidate the user cache so the auth middleware picks up fresh data
     try {
-      await redis.del(getKey(`user:${req.user._id}`));
+      await redis.del(getKey(`user:${req.user.id}`));
     } catch (redisError) {
       // Non-fatal
     }
