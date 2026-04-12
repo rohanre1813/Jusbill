@@ -115,6 +115,8 @@ services:
     build:
       context: ./frontend
       target: production
+      args:
+        - VITE_API_URL=${VITE_API_URL_PROD}
     container_name: jusbill-frontend
     restart: always
     ports:
