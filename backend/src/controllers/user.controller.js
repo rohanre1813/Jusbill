@@ -27,11 +27,11 @@ export const updateProfile = async (req, res) => {
 };
 
 export const getProfile = async (req, res) => {
-  // req.user is already populated by auth middleware (from Redis or DB)
-  // Just return it directly — no extra DB query needed
   try {
-    res.status(200).json(req.user);
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch profile" });
+    res.status(500).json({ message: "Failed to fetch profile", error: error.message });
   }
 };
