@@ -97,18 +97,18 @@ function NotificationBell() {
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
 
   const handleLogout = async () => {
     try {
-      await logoutApi();
+      await logout();
+      navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
     }
-    window.location.href = "/";
   };
 
   const isActive = (path) => location.pathname === path;
