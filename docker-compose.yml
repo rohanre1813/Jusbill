@@ -120,7 +120,7 @@ services:
     container_name: jusbill-frontend
     restart: always
     ports:
-      - "80:80"
+      - "5173:80"
     depends_on:
       backend-prod:
         condition: service_healthy
