@@ -7,8 +7,10 @@ const isProd = process.env.NODE_ENV === "production";
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: isProd,
-  sameSite: isProd ? "none" : "lax",
+  // Changed for EC2 testing: Browsers block 'secure: true' on plain HTTP IPs.
+  // Revert back to 'secure: isProd' and 'sameSite: isProd ? "none" : "lax"' when using HTTPS/Render!
+  secure: false,
+  sameSite: "lax",
   maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
 };
 
