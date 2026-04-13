@@ -17,6 +17,7 @@
     "mongoose": "^8.5.0",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
+    "nanoid": "^5.1.7",
     "pdfkit": "^0.15.0"
   },
   "devDependencies": {

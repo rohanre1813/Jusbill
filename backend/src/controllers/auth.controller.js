@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import { nanoid } from "nanoid";
 import User from "../models/user.js";
 
 const isProd = process.env.NODE_ENV === "production";
@@ -21,7 +22,7 @@ export const register = async (req, res) => {
 
     const user = await User.create({
       name, email, password: hashed, mobile, companyName,
-      shopId: crypto.randomUUID()
+      shopId: nanoid(10) // Beautiful 10-character shopId
     });
 
     const token = jwt.sign(
