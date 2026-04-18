@@ -17,6 +17,20 @@ const COOKIE_OPTIONS = {
 export const register = async (req, res) => {
   try {
     const { name, email, password, mobile, companyName } = req.body;
+
+    if (!name || !email || !password || !mobile || !companyName) {
+      return res.status(400).json({ msg: "All fields are required" });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ msg: "Please enter a valid email address." });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ msg: "Password must be at least 8 characters." });
+    }
+
     const hashed = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -43,10 +57,16 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ msg: "Email and password are required" });
+    }
+
+    const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: "Invalid credentials" });
 
-    const ok = await bcrypt.compare(req.body.password, user.password);
+    const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(400).json({ msg: "Invalid credentials" });
 
     const token = jwt.sign(
