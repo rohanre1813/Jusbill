@@ -98,7 +98,7 @@ export const getInvoices = async (req, res) => {
       console.error("Redis Get Error (invoices):", redisError.message);
     }
 
-    const query = { shopId: req.user.shopId, isDeleted: { $ne: true } };
+    const query = { shopId: req.user.shopId };
 
     if (searchQuery) {
       query.$or = [
@@ -111,7 +111,7 @@ export const getInvoices = async (req, res) => {
     const [invoices, [statsResult]] = await Promise.all([
       Invoice.find(query).sort({ createdAt: -1 }),
       Invoice.aggregate([
-        { $match: { shopId: req.user.shopId, isDeleted: { $ne: true } } },
+        { $match: { shopId: req.user.shopId } },
         {
           $group: {
             _id: null,
@@ -175,33 +175,7 @@ export const updatePaymentStatus = async (req, res) => {
   }
 };
 
-export const deleteInvoice = async (req, res) => {
-  try {
-    const invoice = await Invoice.findOne({ _id: req.params.id, shopId: req.user.shopId });
 
-    if (!invoice) return res.status(404).json({ message: "Invoice not found" });
-
-    // Revert stock for each item in the invoice
-    for (const item of invoice.items) {
-      await Product.findByIdAndUpdate(item.productId, {
-        $inc: { stock: item.qty, sold: -item.qty }
-      });
-    }
-
-    // Soft delete the invoice
-    invoice.isDeleted = true;
-    await invoice.save();
-
-    // Fire cache invalidation non-blocking
-    clearCache(`invoices:${req.user.shopId}`).catch(() => { });
-    clearCache(`products:${req.user.shopId}`).catch(() => { });
-    clearCache(`analytics:${req.user.shopId}`).catch(() => { });
-
-    res.json({ message: "Invoice deleted and stock reverted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to delete invoice" });
-  }
-};
 
 export const sendInvoiceEmail = async (req, res) => {
   try {

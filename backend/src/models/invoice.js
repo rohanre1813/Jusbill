@@ -27,8 +27,7 @@ const invoiceSchema = new mongoose.Schema(
     gst: Number,
     grandTotal: Number,
     paymentStatus: { type: String, enum: ["Paid", "Unpaid"], default: "Unpaid" },
-    description: String,
-    isDeleted: { type: Boolean, default: false }
+    description: String
   },
   { timestamps: true }
 );

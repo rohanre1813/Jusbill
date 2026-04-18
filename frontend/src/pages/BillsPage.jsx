@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { getInvoices, updateInvoiceStatus, deleteInvoice, sendSalesReport, sendInvoiceEmail } from "../api/invoice.api";
+import { getInvoices, updateInvoiceStatus, sendSalesReport, sendInvoiceEmail } from "../api/invoice.api";
 import { getProfile } from "../api/user.api";
 import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, FileText, Calendar, User, Download, CheckCircle, XCircle, Trash2, Bell, Filter } from "lucide-react";
+import { Search, FileText, Calendar, User, Download, CheckCircle, XCircle, Bell, Filter } from "lucide-react";
 import toast from "react-hot-toast";
 import { generateInvoicePDF } from "../utils/pdfGenerator";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -107,18 +107,7 @@ export default function BillsPage() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this invoice? This action cannot be undone.")) return;
 
-    try {
-      await deleteInvoice(id);
-      setAllInvoices(prev => prev.filter(inv => inv._id !== id));
-      invalidateCache('invoices'); // keep client cache in sync
-      toast.success("Invoice deleted successfully");
-    } catch (error) {
-      toast.error("Failed to delete invoice");
-    }
-  };
 
   const handleDownload = (invoice) => {
     if (!userProfile) return toast.error("Profile data missing, cannot generate PDF");
@@ -304,15 +293,7 @@ export default function BillsPage() {
                           {invoice.paymentStatus === "Paid" ? <CheckCircle size={10} /> : <XCircle size={10} />}
                           {invoice.paymentStatus || "Unpaid"}
                         </button>
-                        {invoice.paymentStatus !== "Paid" && (
-                          <button
-                            onClick={() => handleDelete(invoice._id)}
-                            className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors ml-2"
-                            title="Delete Invoice"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        )}
+
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
                         <Calendar size={14} />
