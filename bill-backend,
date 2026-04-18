@@ -1,0 +1,451 @@
+[33mcommit 8e3e88dadc4062f2b09449ef262f0f315f053bc9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Mon Apr 13 22:55:35 2026 +0530
+
+    replacing uuid by nanoid
+
+[33mcommit 7d4d1510928ce83c5292949af8b43c2195ebe93d[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Mon Apr 13 02:22:49 2026 +0530
+
+    namespace backend api to prevent nginx collisions
+
+[33mcommit c2022a3d64eeed7bc8e91036b722cb198d80be1a[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Mon Apr 13 01:03:24 2026 +0530
+
+    update env example with EC2 domain setup
+
+[33mcommit 49d55036fed014a872bcc9209e25bba4f564011b[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Mon Apr 13 00:55:37 2026 +0530
+
+    fix navbar logout routing
+
+[33mcommit 56f10f0b8e737485cfa4e1573297250040eb5309[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Mon Apr 13 00:50:33 2026 +0530
+
+    restore getProfile database query
+
+[33mcommit 1f2109d554921ad7beab31537524e7712e74e089[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Mon Apr 13 00:44:50 2026 +0530
+
+    revert to 5173 for host nginx
+
+[33mcommit 0a3843759a26eb0aa8f71e25dc372b8c19de0d47[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Mon Apr 13 00:38:43 2026 +0530
+
+    add nginx api proxy and ssl fix
+
+[33mcommit e4c53008dcb85bed067aeca3ba927d49b9b52f89[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 22:56:32 2026 +0530
+
+    port mapping fix
+
+[33mcommit bab578578d35afc8bcd11b7ca7fc457cc2c2c61a[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 19:57:09 2026 +0530
+
+    fix get profile database query
+
+[33mcommit 79af48d2dfe328cf80d4988ea9fbda9ddf6d7527[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 19:51:53 2026 +0530
+
+    fix get profile database query
+
+[33mcommit 15cf8883cfe1ef62b76e84bb9a0ca3db20a91586[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 19:44:45 2026 +0530
+
+    fix strict cookies for EC2 http testing
+
+[33mcommit c3ba70c8d20870e914376056a118b16944b7f780[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 19:17:56 2026 +0530
+
+    fix strict cookies for EC2 http testing
+
+[33mcommit a2bc3be195426214faaeca5be1c248dface6b2d0[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 19:11:58 2026 +0530
+
+    dockerfile fix
+
+[33mcommit 16cc9b6124dd04998ff2290a0049f4043123c69b[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 19:01:20 2026 +0530
+
+    dockerfile fix
+
+[33mcommit 1d744f8f247baa94b9d4da24c359f88aaa773460[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 02:37:05 2026 +0530
+
+    fix: use user.createdAt from AuthContext for default fromDate in all 3 analytics pages
+
+[33mcommit f9ad3e6edd181a42f18189da794529958ecb5781[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 02:13:09 2026 +0530
+
+    fix: remove Redis from auth middleware - was causing findById(undefined) null user
+
+[33mcommit 63298b004b153641e4a00d0814f65fff250b3233[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 02:08:32 2026 +0530
+
+    fix: bust /auth/me cache on frontend to prevent 304 CORS failure on reload
+
+[33mcommit 4acf6f207434de687deb7ac52f77067ee4b98ac3[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 01:59:55 2026 +0530
+
+    fix: prevent /auth/me caching (304 broke cross-origin CORS on reload)
+
+[33mcommit 221cb0abe1d0d621ea5ced5265c46cbbd8689c66[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 01:45:48 2026 +0530
+
+    fixing cookie issue
+
+[33mcommit fb60aa49a3e01ab79dfef42c4bebbd95ec69fc28[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sun Apr 12 01:38:14 2026 +0530
+
+    docker compose and env.example fix
+
+[33mcommit 3e0128e59a8d5b0d0ec6d8a6fefe0503f8a9d67a[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Apr 11 02:32:35 2026 +0530
+
+    docker image to dockerhub
+
+[33mcommit 96bf45217fe914b348d1c5ccb143983e0b6d62a9[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Thu Apr 9 12:43:14 2026 +0530
+
+    fixing slow retrival of data
+
+[33mcommit b3cb0e173f96a118d6dd1527a56006cab3d0a870[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Thu Apr 9 11:31:07 2026 +0530
+
+    adding load spinners
+
+[33mcommit d46455ddfb11dde33323d9f91f0cee22a22aeca4[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Thu Mar 5 00:04:13 2026 +0530
+
+    fixing the logout issue
+
+[33mcommit 28a545a6d0d3cd000c8c000f7bd03a08afad89f7[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 17:09:56 2026 +0530
+
+    fixing what data ai must recieve
+
+[33mcommit ac35ef36e2e3d5b919b5091abed191e82903c201[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 16:50:56 2026 +0530
+
+    fixing what data ai must recieve
+
+[33mcommit 738768ed1cf22e2c85d39a88fe759a415b37e981[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 16:29:53 2026 +0530
+
+    fixing what data ai must ecieve
+
+[33mcommit 93a3cd6eec63fb7d06bdd2b14e89c9fb02e64bd6[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 16:15:53 2026 +0530
+
+    fixing invoice logic
+
+[33mcommit 185b9ceb178733ceae43a8f368b6cab065eeb254[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 15:53:42 2026 +0530
+
+    fixing huggingface issues
+
+[33mcommit eea398e40e8c44a69a6e9a5d64a133beac464910[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 15:44:51 2026 +0530
+
+    fixing huggingface issues
+
+[33mcommit 6cf534cdfa5dd4bacf8a7399ae81df3e09e08bf5[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 15:40:09 2026 +0530
+
+    fixing huggingface issues
+
+[33mcommit 4a86f8ce50965227957e426543197c1d78c75264[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 15:32:51 2026 +0530
+
+    fixing huggingface issues
+
+[33mcommit cbd6c3b6a902b6e06fb0918d745902daa9c7cf0c[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 15:24:34 2026 +0530
+
+    using huggingface instead of gemini
+
+[33mcommit 992230a1fc94ec38775313cea5c2c37af12d8957[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 15:21:48 2026 +0530
+
+    using huggingface instead of gemini
+
+[33mcommit 2a8b4c236dc83f056942705be606da851c4b7dc3[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 14:58:41 2026 +0530
+
+    chatbot feature
+
+[33mcommit 31b42b8c2c5c29f993d1cf1de4a4c8c8dc6721fe[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 12:42:41 2026 +0530
+
+    mongodb backup
+
+[33mcommit eb5b5292d05615f50eea9e15c17ff4b2dabf66ad[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 12:36:05 2026 +0530
+
+    mongodb backup
+
+[33mcommit 759a97e216b5072d39131cb03cdbef004522494c[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 12:00:53 2026 +0530
+
+    fixing notification bell rerendering
+
+[33mcommit d5e5c96e5dcfd4c75bddf4f416ec41f8af37e380[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 11:38:01 2026 +0530
+
+    fixing notification bell rerendering
+
+[33mcommit 4ba46c92390b0c34d2a30e181b2c5a6fb3b369e9[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 11:27:29 2026 +0530
+
+    fixing notification bell rerendering
+
+[33mcommit 6475be4370ba96cb69a7aa4ebf10ab5ac0465819[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 11:19:06 2026 +0530
+
+    fixing notification bell rerendering
+
+[33mcommit 1cf1b69d56a84ded412373798dc1be8b5a74ed48[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 11:06:35 2026 +0530
+
+    fixing notification bell rerendering
+
+[33mcommit 5c8871b475a643f3e743b71ac2fec48d19262635[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Sat Feb 28 10:51:24 2026 +0530
+
+    fixing purchase collison
+
+[33mcommit 7b8aff4bae70c8818fdeca072e5ff0ca32b59bfc[m
+Author: Rohanre1813 <138598589+rohanre1813@users.noreply.github.com>
+Date:   Thu Feb 26 12:41:26 2026 +0530
+
+    Add MIT License to the project
+
+[33mcommit 51e6bedc6ab6fc43f850d8427fd4fdb5d7da821b[m
+Author: Rohanre1813 <138598589+rohanre1813@users.noreply.github.com>
+Date:   Thu Feb 26 12:37:00 2026 +0530
+
+    Update secure authentication section in README
+    
+    Removed OTP verification from secure authentication details.
+
+[33mcommit 681efac857bfd5110606c1558745b146cb94b6e2[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Thu Feb 26 12:26:18 2026 +0530
+
+    updating README.md file for better understanding and fixed undefined displaying on userprofile
+
+[33mcommit 53bbb45f4c2429b8f54c6d058405dbcb110fa9a2[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 22:26:55 2026 +0530
+
+    Fix: Restructured confirmation modal for visibility and blur
+
+[33mcommit 6002a32a238066e15ead13c59fcec575b25d529d[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 22:18:05 2026 +0530
+
+    Optimize: Parallel product loading and removed analytics caching
+
+[33mcommit 67904ad75378dcd3480cefa1795ff416800cc306[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 21:55:25 2026 +0530
+
+    UI: Add confirmation modal for invoice submission
+
+[33mcommit d4b650026e61edb64e9e3262e79f348219f8b7ec[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 19:28:18 2026 +0530
+
+    Docs: Update README and .env.example with Mailjet config
+
+[33mcommit 4b70765c131a836b0e908098995e411cd100cdbd[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 19:24:15 2026 +0530
+
+    Update: Add automatic PDF pagination for backend reports
+
+[33mcommit f8de09f1f29f09ce9d57f90cf02c325083a213b0[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 18:58:31 2026 +0530
+
+    Switch: Integrate Mailjet API for free email delivery
+
+[33mcommit 7b05f023c656bde4873abeb211f366e34877bcf8[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 17:57:48 2026 +0530
+
+    Final: Postmark integration with verified college email
+
+[33mcommit 340ca970a4310d9cb668891a5606e2c5e047f3bb[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 17:27:33 2026 +0530
+
+    Final: Remove all non-essential code and comments
+
+[33mcommit d5f138e5cc2e02a2e939151c1f8775e54365600d[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 17:17:51 2026 +0530
+
+    Revert: Switch back to Nodemailer SMTP
+
+[33mcommit b849d45712b3be9c012042d397b8ccff1821ebd7[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 16:45:00 2026 +0530
+
+    Final cleanup: Remove all debug code and unnecessary dependencies
+
+[33mcommit a9761886dc0ced61dd2a671f492b6e20152f9271[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 16:27:53 2026 +0530
+
+    Debug: Force IPv4 for SMTP and add diagnostic route
+
+[33mcommit b3d8a368209c3479d216fa2c5a354e1cee66829c[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 15:51:08 2026 +0530
+
+    Fix: Resolve syntax error in email service
+
+[33mcommit e2c26d1a4443fc0fcb5741e14f11049daebea88a[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 15:45:22 2026 +0530
+
+    Fix: Add TLS resilience and trim credentials for email
+
+[33mcommit f047549e690a1974602b184e94b77adc1c4f6f59[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 15:38:58 2026 +0530
+
+    Fix: Switch email to port 587 and enable full debug logging
+
+[33mcommit 4c8823366c25c0411cbcbfbe918653fc718e7b63[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 15:30:22 2026 +0530
+
+    Fix: Await email sending and use explicit SMTP config
+
+[33mcommit d9f48a8f468c2b3b3f7b9732c5a1554d5c4ba92e[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 15:21:36 2026 +0530
+
+    Fix: Add Redis resilience and resolve 500 errors
+
+[33mcommit 5c692ff0aa81c5b41d05cdefeb4038ef02057ee1[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 15:14:03 2026 +0530
+
+    Feature: Implement Redis caching and enhance email logs
+
+[33mcommit 50306195fa878cb72ba7428cb9de51f274796850[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 14:58:30 2026 +0530
+
+    Fix: add missing fields to registration and fix error handling
+
+[33mcommit e06688f5c4d8237463f1a4e589111c9c4d850988[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 14:21:48 2026 +0530
+
+    Fix: add try/catch to auth endpoints to prevent 502 crashes
+
+[33mcommit a007ba06be42640ffbac348cf4522308fd1ae06f[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 14:14:13 2026 +0530
+
+    Fix CORS with callback function, add debug log
+
+[33mcommit 27d89b9572453a1cac713495031696c9769f757d[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 13:02:17 2026 +0530
+
+    Fix: allow cross-origin cookies for Render deployment
+
+[33mcommit 90ba0727687105dd5c86e554e67b4253bb8bb271[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 12:58:23 2026 +0530
+
+    Restore frontend Dockerfile and axios.js
+
+[33mcommit a2f5f5c4fd449084fca01ae16fadd1e287b2a0af[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 12:53:57 2026 +0530
+
+    Fix: scope envsubst to BACKEND_URL only, fix Nginx 502
+
+[33mcommit e49825b26e8c813372d444714e5b319caadb5df9[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 12:40:49 2026 +0530
+
+    Fix: scope envsubst to BACKEND_URL only, fix Nginx 502
+
+[33mcommit ed7b80c880f6b9a4041c98bc0508d6698664afb4[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 12:14:07 2026 +0530
+
+    Fix: Nginx proxy for same-origin cookies
+
+[33mcommit 72c925a5099e5e7c5cb0730fc7efb8169b14ae5d[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 12:02:58 2026 +0530
+
+    Fix: use sameSite=none for production cross-domain cookies
+
+[33mcommit 379c90f7c5a132398b3a859ea4afd310e7a663fa[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 11:58:00 2026 +0530
+
+    Fix: pass VITE_API_URL as Docker build arg
+
+[33mcommit 7f626f8841ca971216b87e1452b1ce0832d183a3[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 11:10:17 2026 +0530
+
+    Replace Puppeteer with PDFKit, slim Dockerfile for Render
+
+[33mcommit 51fc3067517ab0eb4343037a5fb31d14e7a93242[m
+Author: rohanre1813 <rohanshetty135781@gmail.com>
+Date:   Wed Feb 25 10:53:23 2026 +0530
+
+    first commit

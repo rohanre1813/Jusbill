@@ -72,14 +72,11 @@ export const createInvoice = async (req, res) => {
       grandTotal: subtotalAfterDiscount + gst
     });
 
-    try {
-      // Fire cache invalidation non-blocking — don't await, don't slow down the response
-      clearCache(`invoices:${req.user.shopId}`).catch(() => { });
-      clearCache(`products:${req.user.shopId}`).catch(() => { });
-      clearCache(`analytics:${req.user.shopId}`).catch(() => { });
-    } catch (redisError) {
-      console.error("Redis Clear Error (createInvoice):", redisError.message);
-    }
+    // Non-blocking cache invalidation
+    clearCache(`invoices:${req.user.shopId}`).catch(() => {});
+    clearCache(`products:${req.user.shopId}`).catch(() => {});
+    clearCache(`analytics:${req.user.shopId}`).catch(() => {});
+
     res.status(201).json(invoice);
   } catch (error) {
     res.status(500).json({ message: "Failed to create invoice", error: error.message });

@@ -5,8 +5,16 @@ import { Sun, Moon, Package, FileText, LogOut, User, Bell, AlertTriangle, X, Che
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { getProducts } from "../api/product.api";
-
 import { logout as logoutApi } from "../api/auth.api";
+
+const navLinks = [
+  { to: "/dashboard", icon: FileText, label: "Invoice" },
+  { to: "/products", icon: Package, label: "Products" },
+  { to: "/customers", icon: User, label: "Customers" },
+  { to: "/bills", icon: FileText, label: "Bills" },
+  { to: "/reports", icon: FileText, label: "Reports" },
+  { to: "/chat", icon: Sparkles, label: "AI" },
+];
 
 function NotificationBell() {
   const { user } = useAuth();
@@ -14,11 +22,7 @@ function NotificationBell() {
   const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      loadNotifications();
-    }
-
-    // Listen for stock changes from other pages
+    if (user) loadNotifications();
     const handleStockChange = () => loadNotifications();
     window.addEventListener("stock-changed", handleStockChange);
     return () => window.removeEventListener("stock-changed", handleStockChange);
@@ -27,8 +31,7 @@ function NotificationBell() {
   const loadNotifications = async () => {
     try {
       const res = await getProducts();
-      const lowStock = res.data.filter(p => p.stock < 5);
-      setNotifications(lowStock);
+      setNotifications(res.data.filter(p => p.stock < 5));
     } catch (error) {
       console.error("Failed to load notifications", error);
     }
@@ -58,10 +61,7 @@ function NotificationBell() {
           >
             <div className="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
               <h3 className="font-semibold text-gray-900 dark:text-white text-sm">Notifications</h3>
-              <button
-                onClick={() => setShowNotifications(false)}
-                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-              >
+              <button onClick={() => setShowNotifications(false)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
                 <X size={14} />
               </button>
             </div>
@@ -101,7 +101,6 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-
   const handleLogout = async () => {
     try {
       await logout();
@@ -112,6 +111,23 @@ export default function Navbar() {
   };
 
   const isActive = (path) => location.pathname === path;
+
+  // Reusable theme toggle — handles both desktop (icon only) and mobile (icon + label) forms
+  const ThemeToggle = ({ mobile }) => (
+    <button
+      onClick={toggleTheme}
+      className={mobile
+        ? "flex flex-col items-center gap-1 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0"
+        : "w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors"
+      }
+      aria-label="Toggle theme"
+    >
+      <motion.div initial={false} animate={{ rotate: theme === "dark" ? 180 : 0 }} transition={{ duration: 0.3 }}>
+        {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+      </motion.div>
+      {mobile && <span className="text-[10px] font-medium">{theme === "dark" ? "Light" : "Dark"}</span>}
+    </button>
+  );
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-sm shadow-indigo-500/5 transition-all">
@@ -126,111 +142,35 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* Desktop nav links */}
         {user && (
           <div className="hidden md:flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1.5 rounded-xl">
-            <Link
-              to="/dashboard"
-              className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive("/dashboard") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+            {navLinks.map(({ to, icon: Icon, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive(to) ? "text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                 }`}
-            >
-              <FileText size={18} />
-              <span>Invoice</span>
-              {isActive("/dashboard") && (
-                <motion.div
-                  layoutId="nav-pill"
-                  className="absolute inset-0 bg-white dark:bg-gray-700 shadow-sm rounded-lg -z-10"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-            </Link>
-
-            <Link
-              to="/products"
-              className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive("/products") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-                }`}
-            >
-              <Package size={18} />
-              <span>Products</span>
-              {isActive("/products") && (
-                <motion.div
-                  layoutId="nav-pill"
-                  className="absolute inset-0 bg-white dark:bg-gray-700 shadow-sm rounded-lg -z-10"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-            </Link>
-
-            <Link
-              to="/customers"
-              className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive("/customers") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-                }`}
-            >
-              <User size={18} />
-              <span>Customers</span>
-              {isActive("/customers") && (
-                <motion.div
-                  layoutId="nav-pill"
-                  className="absolute inset-0 bg-white dark:bg-gray-700 shadow-sm rounded-lg -z-10"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-            </Link>
-
-            <Link
-              to="/bills"
-              className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive("/bills") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-                }`}
-            >
-              <FileText size={18} />
-              <span>Bills</span>
-              {isActive("/bills") && (
-                <motion.div
-                  layoutId="nav-pill"
-                  className="absolute inset-0 bg-white dark:bg-gray-700 shadow-sm rounded-lg -z-10"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-            </Link>
-
-            <Link
-              to="/reports"
-              className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive("/reports") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-                }`}
-            >
-              <FileText size={18} />
-              <span>Reports</span>
-              {isActive("/reports") && (
-                <motion.div
-                  layoutId="nav-pill"
-                  className="absolute inset-0 bg-white dark:bg-gray-700 shadow-sm rounded-lg -z-10"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-            </Link>
-
-            <Link
-              to="/chat"
-              className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive("/chat") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-                }`}
-            >
-              <Sparkles size={18} />
-              <span>AI</span>
-              {isActive("/chat") && (
-                <motion.div
-                  layoutId="nav-pill"
-                  className="absolute inset-0 bg-white dark:bg-gray-700 shadow-sm rounded-lg -z-10"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-            </Link>
+              >
+                <Icon size={18} />
+                <span>{label}</span>
+                {isActive(to) && (
+                  <motion.div
+                    layoutId="nav-pill"
+                    className="absolute inset-0 bg-white dark:bg-gray-700 shadow-sm rounded-lg -z-10"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </Link>
+            ))}
           </div>
         )}
 
+        {/* Right side controls */}
         {user ? (
           <div className="flex items-center gap-3">
-            {/* Notification Bell */}
             <NotificationBell />
-
             <Link
               to="/profile"
               className="hidden md:flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -238,21 +178,7 @@ export default function Navbar() {
               <User size={16} />
               <span className="max-w-[150px] truncate">{user.email || "User"}</span>
             </Link>
-
-            <button
-              onClick={toggleTheme}
-              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors"
-              aria-label="Toggle theme"
-            >
-              <motion.div
-                initial={false}
-                animate={{ rotate: theme === "dark" ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-              </motion.div>
-            </button>
-
+            <ThemeToggle />
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-sm font-medium"
@@ -264,30 +190,11 @@ export default function Navbar() {
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors"
-              aria-label="Toggle theme"
-            >
-              <motion.div
-                initial={false}
-                animate={{ rotate: theme === "dark" ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-              </motion.div>
-            </button>
-
-            <Link
-              to="/login"
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            >
+            <ThemeToggle />
+            <Link to="/login" className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
               Sign In
             </Link>
-            <Link
-              to="/register"
-              className="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shadow-lg shadow-indigo-500/20"
-            >
+            <Link to="/register" className="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shadow-lg shadow-indigo-500/20">
               Get Started
             </Link>
           </div>
@@ -298,53 +205,16 @@ export default function Navbar() {
       {user && (
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 pb-safe z-50">
           <div className="flex items-center overflow-x-auto no-scrollbar h-16 w-full px-6 gap-1">
-            <Link
-              to="/dashboard"
-              className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-shrink-0 ${isActive("/dashboard") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"}`}
-            >
-              <FileText size={20} />
-              <span className="text-[10px] font-medium">Invoice</span>
-            </Link>
-
-            <Link
-              to="/products"
-              className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-shrink-0 ${isActive("/products") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"}`}
-            >
-              <Package size={20} />
-              <span className="text-[10px] font-medium">Products</span>
-            </Link>
-
-            <Link
-              to="/customers"
-              className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-shrink-0 ${isActive("/customers") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"}`}
-            >
-              <User size={20} />
-              <span className="text-[10px] font-medium">Cust.</span>
-            </Link>
-
-            <Link
-              to="/bills"
-              className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-shrink-0 ${isActive("/bills") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"}`}
-            >
-              <FileText size={20} />
-              <span className="text-[10px] font-medium">Bills</span>
-            </Link>
-
-            <Link
-              to="/reports"
-              className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-shrink-0 ${isActive("/reports") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"}`}
-            >
-              <FileText size={20} />
-              <span className="text-[10px] font-medium">Reports</span>
-            </Link>
-
-            <Link
-              to="/chat"
-              className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-shrink-0 ${isActive("/chat") ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"}`}
-            >
-              <Sparkles size={20} />
-              <span className="text-[10px] font-medium">AI</span>
-            </Link>
+            {navLinks.map(({ to, icon: Icon, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-shrink-0 ${isActive(to) ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"}`}
+              >
+                <Icon size={20} />
+                <span className="text-[10px] font-medium">{label}</span>
+              </Link>
+            ))}
 
             <Link
               to="/profile"
@@ -354,13 +224,7 @@ export default function Navbar() {
               <span className="text-[10px] font-medium max-w-[60px] truncate">{user.email?.split('@')[0]}</span>
             </Link>
 
-            <button
-              onClick={toggleTheme}
-              className="flex flex-col items-center gap-1 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0"
-            >
-              {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-              <span className="text-[10px] font-medium">{theme === "dark" ? "Light" : "Dark"}</span>
-            </button>
+            <ThemeToggle mobile />
 
             <button
               onClick={handleLogout}
