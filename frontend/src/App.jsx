@@ -9,6 +9,8 @@ import ProfilePage from "./pages/ProfilePage";
 import ChatPage from "./pages/ChatPage";
 import LandingPage from "./pages/LandingPage";
 import PublicInventoryPage from "./pages/PublicInventoryPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Layout from "./components/Layout";
@@ -41,6 +43,8 @@ function AnimatedRoutes() {
       <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/dashboard" />} />
       <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/dashboard" />} />
       <Route path="/shop/:shopId" element={<PublicInventoryPage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
       {/* Protected Routes - Layout stays mounted, only page content animates */}
       <Route element={<ProtectedRoute><LayoutWithAnimatedOutlet /></ProtectedRoute>}>

@@ -425,6 +425,16 @@ export default function LandingPage() {
                     Sign In
                   </Link>
                 </li>
+                <li>
+                  <Link to="/privacy-policy" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms-of-service" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm">
+                    Terms of Service
+                  </Link>
+                </li>
               </ul>
             </div>
 
