@@ -193,10 +193,10 @@ export default function Navbar() {
             <Link to="/blog" className="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
               Blog
             </Link>
-            <Link to="/about" className="hidden sm:inline-block text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
+            <Link to="/about" className="inline-block text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
               About
             </Link>
-            <Link to="/contact" className="hidden sm:inline-block text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
+            <Link to="/contact" className="inline-block text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
               Contact
             </Link>
             <ThemeToggle />
