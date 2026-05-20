@@ -11,6 +11,7 @@ import customerRoutes from "./routes/customer.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import purchaseRoutes from "./routes/purchase.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
 
 dotenv.config({ path: "./.env" });
 connectDB();
@@ -22,7 +23,11 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map(o => o.trim())
-  : ["http://localhost:5173"];
+  : [];
+
+if (!allowedOrigins.includes("http://localhost:5173")) {
+  allowedOrigins.push("http://localhost:5173");
+}
 
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 
@@ -38,6 +43,7 @@ apiRouter.use("/customers", customerRoutes);
 apiRouter.use("/users", userRoutes);
 apiRouter.use("/purchases", purchaseRoutes);
 apiRouter.use("/chat", chatRoutes);
+apiRouter.use("/contact", contactRoutes);
 
 app.use("/api", apiRouter);
 

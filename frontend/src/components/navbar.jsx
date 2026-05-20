@@ -189,12 +189,21 @@ export default function Navbar() {
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-4">
+            <Link to="/blog" className="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
+              Blog
+            </Link>
+            <Link to="/about" className="hidden sm:inline-block text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
+              About
+            </Link>
+            <Link to="/contact" className="hidden sm:inline-block text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
+              Contact
+            </Link>
             <ThemeToggle />
-            <Link to="/login" className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            <Link to="/login" className="px-3 md:px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
               Sign In
             </Link>
-            <Link to="/register" className="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shadow-lg shadow-indigo-500/20">
+            <Link to="/register" className="px-3 md:px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shadow-lg shadow-indigo-500/20">
               Get Started
             </Link>
           </div>

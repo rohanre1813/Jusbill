@@ -11,6 +11,10 @@ import LandingPage from "./pages/LandingPage";
 import PublicInventoryPage from "./pages/PublicInventoryPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Layout from "./components/Layout";
@@ -43,8 +47,14 @@ function AnimatedRoutes() {
       <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/dashboard" />} />
       <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/dashboard" />} />
       <Route path="/shop/:shopId" element={<PublicInventoryPage />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-      <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+      
+      {/* Public Informational Routes - with Layout */}
+      <Route path="/about" element={<Layout><AboutPage /></Layout>} />
+      <Route path="/contact" element={<Layout><ContactPage /></Layout>} />
+      <Route path="/blog" element={<Layout><BlogPage /></Layout>} />
+      <Route path="/blog/:slug" element={<Layout><BlogPostPage /></Layout>} />
+      <Route path="/privacy-policy" element={<Layout><PrivacyPolicyPage /></Layout>} />
+      <Route path="/terms-of-service" element={<Layout><TermsOfServicePage /></Layout>} />
 
       {/* Protected Routes - Layout stays mounted, only page content animates */}
       <Route element={<ProtectedRoute><LayoutWithAnimatedOutlet /></ProtectedRoute>}>

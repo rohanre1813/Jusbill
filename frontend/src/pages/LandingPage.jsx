@@ -411,49 +411,60 @@ export default function LandingPage() {
               <h4 className="font-bold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wider">Product</h4>
               <ul className="space-y-3">
                 <li>
-                  <Link to="/register" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm">
+                  <Link to="/register" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
                     Get Started Free
                   </Link>
                 </li>
                 <li>
-                  <a href="#features" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm">
+                  <a href="#features" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
                     Features
                   </a>
                 </li>
                 <li>
-                  <Link to="/login" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm">
+                  <Link to="/blog" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
+                    Knowledge Hub (Blog)
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/about" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/login" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
                     Sign In
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/privacy-policy" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm">
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/terms-of-service" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm">
-                    Terms of Service
                   </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Contact */}
+            {/* Contact & Legal */}
             <div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wider">Contact</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wider">Support & Legal</h4>
               <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                  <Mail size={16} className="text-indigo-500 shrink-0" />
+                <li>
+                  <Link to="/contact" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/privacy-policy" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms-of-service" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-900">
+                  <Mail size={14} className="text-indigo-500 shrink-0" />
                   <a
                     href="mailto:jusbill.contact@gmail.com"
-                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors break-all"
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors break-all text-xs font-semibold"
                   >
                     jusbill.contact@gmail.com
                   </a>
-                </li>
-                <li className="flex items-start gap-2 text-sm text-gray-500 dark:text-gray-400 mt-4">
-                  <CheckCircle size={16} className="text-green-500 shrink-0 mt-0.5" />
-                  <span>We typically respond within 24 hours</span>
                 </li>
               </ul>
             </div>
