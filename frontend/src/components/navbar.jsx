@@ -200,10 +200,10 @@ export default function Navbar() {
               Contact
             </Link>
             <ThemeToggle />
-            <Link to="/login" className="px-3 md:px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            <Link to="/login" className="hidden md:inline-block px-3 md:px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
               Sign In
             </Link>
-            <Link to="/register" className="px-3 md:px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shadow-lg shadow-indigo-500/20">
+            <Link to="/register" className="hidden md:inline-block px-3 md:px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shadow-lg shadow-indigo-500/20">
               Get Started
             </Link>
           </div>
