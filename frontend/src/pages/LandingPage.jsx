@@ -121,9 +121,8 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0 }}
-            transition={{ duration: 0.5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
             className="max-w-xl mx-auto text-center"
           >
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -161,8 +160,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            animate="visible"
             variants={staggerContainer}
             className="text-center mb-16"
           >
@@ -211,8 +209,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            animate="visible"
             variants={staggerContainer}
             className="text-center mb-20"
           >
@@ -229,8 +226,7 @@ export default function LandingPage() {
 
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            animate="visible"
             variants={staggerContainer}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
@@ -315,8 +311,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            animate="visible"
             variants={staggerContainer}
             className="text-center mb-16"
           >
@@ -330,8 +325,7 @@ export default function LandingPage() {
 
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            animate="visible"
             variants={staggerContainer}
             className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
           >
@@ -349,9 +343,8 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0 }}
-            transition={{ duration: 0.6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-3xl mx-auto text-center"
           >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white font-heading mb-6">
@@ -491,8 +484,7 @@ function FeatureCard({ icon, title, description, delay, color, bg }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay, ease: "backOut" }}
       whileHover={{ y: -5 }}
       className="bg-white dark:bg-gray-800/50 backdrop-blur-lg p-8 rounded-3xl shadow-sm hover:shadow-xl hover:shadow-gray-200/50 dark:hover:shadow-none border border-gray-100 dark:border-gray-800 transition-all duration-300 group"
