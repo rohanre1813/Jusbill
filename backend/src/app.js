@@ -21,15 +21,13 @@ const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(",").map(o => o.trim())
-  : [];
+const allowedOrigins = ["*"]; // Allow all origins (including AdSense preview iframe) for development
 
 if (!allowedOrigins.includes("http://localhost:5173")) {
   allowedOrigins.push("http://localhost:5173");
 }
 
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(cors({ origin: allowedOrigins, credentials: true })); // unchanged but now allows any origin
 
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });

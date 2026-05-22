@@ -25,18 +25,10 @@ export function AuthProvider({ children }) {
   }, []);
 
   const checkUser = async () => {
-    try {
-      const res = await verifyApi();
-      const userData = res.data;
-      setUser(userData);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
     } catch (error) {
-      // Only clear session on a real 401 — not on network errors / cold starts
-      if (error.response?.status === 401) {
-        setUser(null);
-        localStorage.removeItem(STORAGE_KEY);
-      }
-      // On network errors we keep the cached user so a temp outage doesn't log you out
+      // Clear user on any error (401 or network/CORS)
+      setUser(null);
+      localStorage.removeItem(STORAGE_KEY);
     } finally {
       setLoading(false);
     }
