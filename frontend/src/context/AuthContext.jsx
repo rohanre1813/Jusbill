@@ -25,8 +25,13 @@ export function AuthProvider({ children }) {
   }, []);
 
   const checkUser = async () => {
+    try {
+      const res = await verifyApi();
+      const userData = res.data;
+      setUser(userData);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
     } catch (error) {
-      // Clear user on any error (401 or network/CORS)
+      // Clear user on any error (401, network error, CORS etc.)
       setUser(null);
       localStorage.removeItem(STORAGE_KEY);
     } finally {
