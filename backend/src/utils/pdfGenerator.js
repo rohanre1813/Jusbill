@@ -58,12 +58,17 @@ export const generateSalesReportPdf = async (periodLabel, totalSales, totalPaid,
     </html>
   `;
 
-  const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox", "--disable-setuid-sandbox"] });
+  const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || undefined;
+  const browser = await puppeteer.launch({ 
+    executablePath,
+    headless: "new", 
+    args: ["--no-sandbox", "--disable-setuid-sandbox"] 
+  });
   const page = await browser.newPage();
   await page.setContent(htmlContent);
-  const pdfBuffer = await page.pdf({ format: "A4" });
+  const pdfBytes = await page.pdf({ format: "A4" });
   await browser.close();
-  return pdfBuffer;
+  return Buffer.from(pdfBytes);
 };
 
 export const generatePurchaseReportPdf = async (periodLabel, totalExpenses, reportPurchases) => {
@@ -119,10 +124,15 @@ export const generatePurchaseReportPdf = async (periodLabel, totalExpenses, repo
     </html>
   `;
 
-  const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox", "--disable-setuid-sandbox"] });
+  const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || undefined;
+  const browser = await puppeteer.launch({ 
+    executablePath,
+    headless: "new", 
+    args: ["--no-sandbox", "--disable-setuid-sandbox"] 
+  });
   const page = await browser.newPage();
   await page.setContent(htmlContent);
-  const pdfBuffer = await page.pdf({ format: "A4" });
+  const pdfBytes = await page.pdf({ format: "A4" });
   await browser.close();
-  return pdfBuffer;
+  return Buffer.from(pdfBytes);
 };
