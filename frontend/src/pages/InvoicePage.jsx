@@ -207,7 +207,7 @@ export default function InvoicePage() {
   const loadProducts = async () => {
     try {
       const res = await getProducts();
-      setProducts(res.data);
+      setProducts(res.data.filter(p => !p.isRawMaterial));
     } catch (error) {
       toast.error("Failed to load products");
     }

@@ -28,6 +28,7 @@ export default function ProductPage() {
     name: "",
     price: "",
     unit: "",
+    isRawMaterial: false,
   });
 
   const [editingId, setEditingId] = useState(null);
@@ -82,7 +83,7 @@ export default function ProductPage() {
       await createProduct({ ...form, stock: 0, purchasePrice: 0 });
       toast.success("Product added successfully!");
       window.dispatchEvent(new Event("stock-changed"));
-      setForm({ name: "", price: "", unit: "" });
+      setForm({ name: "", price: "", unit: "", isRawMaterial: false });
       reloadProducts();
     } catch (error) {
       toast.error("Failed to add product");
@@ -188,9 +189,21 @@ export default function ProductPage() {
               </div>
             </div>
 
-            <div>
-
             </div>
+
+            <div className="flex items-center gap-2 mt-2">
+              <input
+                type="checkbox"
+                id="isRawMaterial"
+                checked={form.isRawMaterial}
+                onChange={(e) => setForm({ ...form, isRawMaterial: e.target.checked })}
+                className="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label htmlFor="isRawMaterial" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Is Raw Material? <span className="text-xs text-gray-500 font-normal">(Hide from sales)</span>
+              </label>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Unit</label>
               <input

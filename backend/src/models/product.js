@@ -9,7 +9,8 @@ const productSchema = new mongoose.Schema(
     stock: Number,
     unit: String,
     description: String,
-    sold: { type: Number, default: 0 }
+    sold: { type: Number, default: 0 },
+    isRawMaterial: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

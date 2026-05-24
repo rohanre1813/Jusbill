@@ -6,13 +6,14 @@ import { clearCache } from "../middleware/cache.js";
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, stock, unit, description, purchasePrice } = req.body;
+    const { name, price, stock, unit, description, purchasePrice, isRawMaterial } = req.body;
     const shopId = req.user.shopId;
 
     const product = new Product({
       shopId, name, price,
       purchasePrice: purchasePrice || 0,
-      stock, unit, description
+      stock, unit, description,
+      isRawMaterial: isRawMaterial || false
     });
 
     await product.save();
@@ -91,11 +92,11 @@ export const getProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
-    const { name, price, stock, unit, description, purchasePrice } = req.body;
+    const { name, price, stock, unit, description, purchasePrice, isRawMaterial } = req.body;
 
     const product = await Product.findOneAndUpdate(
       { _id: req.params.id, shopId: req.user.shopId },
-      { name, price, purchasePrice, stock, unit, description },
+      { name, price, purchasePrice, stock, unit, description, isRawMaterial },
       { new: true }
     );
 
@@ -132,7 +133,7 @@ export const getPublicProducts = async (req, res) => {
     const shop = await User.findOne({ shopId }).select("companyName");
     const shopName = shop?.companyName || "Unknown Shop";
 
-    const products = await Product.find({ shopId })
+    const products = await Product.find({ shopId, isRawMaterial: { $ne: true } })
       .select("name price stock unit description")
       .sort({ createdAt: -1 });
 
