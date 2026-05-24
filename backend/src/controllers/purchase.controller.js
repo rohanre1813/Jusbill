@@ -1,4 +1,5 @@
 import Purchase from "../models/purchase.js";
+import User from "../models/user.js";
 import Product from "../models/product.js";
 import { sendEmailWithAttachment } from "../utils/emailService.js";
 import { redis, getKey } from "../config/redis.js";
@@ -120,14 +121,19 @@ export const sendPurchaseReport = async (req, res) => {
 
     const pdfBuffer = await generatePurchaseReportPdf(periodLabel, totalExpenses, reportPurchases);
 
+    const user = await User.findById(req.user.id);
+    if (!user || !user.email) {
+      return res.status(400).json({ message: "User email not found" });
+    }
+
     // Send in background
     sendEmailWithAttachment(
-      req.user.email,
+      user.email,
       `Purchase Report (${periodLabel})`,
       `Attached is your purchase report for the period: ${periodLabel}.`,
       pdfBuffer,
       `Purchase_Report_${fromDate || 'All'}_to_${toDate || 'Time'}.pdf`
-    ).catch(err => console.error("Background Purchase Email Error:", err));
+    ).catch(err => console.error("Background Report Email Error:", err));
 
     res.json({ message: "Report generated successfully" });
   } catch (error) {

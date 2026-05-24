@@ -1,4 +1,5 @@
 import Invoice from "../models/invoice.js";
+import User from "../models/user.js";
 import Product from "../models/product.js";
 import Counter from "../models/counter.js";
 import { sendEmailWithAttachment } from "../utils/emailService.js";
@@ -221,9 +222,14 @@ export const sendSalesReport = async (req, res) => {
 
     const pdfBuffer = await generateSalesReportPdf(periodLabel, totalSales, totalPaid, totalUnpaid, reportInvoices);
 
+    const user = await User.findById(req.user.id);
+    if (!user || !user.email) {
+      return res.status(400).json({ message: "User email not found" });
+    }
+
     // Send in background
     sendEmailWithAttachment(
-      req.user.email,
+      user.email,
       `Sales Report (${periodLabel})`,
       `Attached is your sales report for the period: ${periodLabel}.`,
       pdfBuffer,
