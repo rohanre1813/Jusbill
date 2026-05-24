@@ -5,6 +5,8 @@ import { sendEmailWithAttachment } from "../utils/emailService.js";
 import puppeteer from "puppeteer";
 import { redis, getKey } from "../config/redis.js";
 import { clearCache } from "../middleware/cache.js";
+import { generateSalesReportPdf } from "../utils/pdfGenerator.js";
+import { fetchWithCache } from "../utils/cacheHelper.js";
 
 export const createInvoice = async (req, res) => {
   try {
@@ -86,59 +88,43 @@ export const createInvoice = async (req, res) => {
 export const getInvoices = async (req, res) => {
   try {
     const { search: searchQuery } = req.query;
-    const cacheKey = getKey(`invoices:${req.user.shopId}:${searchQuery || "all"}`);
 
-    try {
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        console.log("Redis Cache Hit: invoices");
-        return res.json(cached);
+    const response = await fetchWithCache(`invoices:${req.user.shopId}:${searchQuery || "all"}`, 300, async () => {
+      const query = { shopId: req.user.shopId };
+
+      if (searchQuery) {
+        query.$or = [
+          { invoiceId: { $regex: searchQuery, $options: "i" } },
+          { customerName: { $regex: searchQuery, $options: "i" } }
+        ];
       }
-    } catch (redisError) {
-      console.error("Redis Get Error (invoices):", redisError.message);
-    }
 
-    const query = { shopId: req.user.shopId };
-
-    if (searchQuery) {
-      query.$or = [
-        { invoiceId: { $regex: searchQuery, $options: "i" } },
-        { customerName: { $regex: searchQuery, $options: "i" } }
-      ];
-    }
-
-    // Run both queries in parallel — stats via aggregation (no large doc fetch)
-    const [invoices, [statsResult]] = await Promise.all([
-      Invoice.find(query).sort({ createdAt: -1 }),
-      Invoice.aggregate([
-        { $match: { shopId: req.user.shopId } },
-        {
-          $group: {
-            _id: null,
-            totalSales: { $sum: "$grandTotal" },
-            totalReceived: {
-              $sum: { $cond: [{ $eq: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
-            },
-            totalPending: {
-              $sum: { $cond: [{ $ne: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
+      // Run both queries in parallel — stats via aggregation (no large doc fetch)
+      const [invoices, [statsResult]] = await Promise.all([
+        Invoice.find(query).sort({ createdAt: -1 }),
+        Invoice.aggregate([
+          { $match: { shopId: req.user.shopId } },
+          {
+            $group: {
+              _id: null,
+              totalSales: { $sum: "$grandTotal" },
+              totalReceived: {
+                $sum: { $cond: [{ $eq: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
+              },
+              totalPending: {
+                $sum: { $cond: [{ $ne: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
+              }
             }
           }
-        }
-      ])
-    ]);
+        ])
+      ]);
 
-    const stats = statsResult
-      ? { totalSales: statsResult.totalSales, totalReceived: statsResult.totalReceived, totalPending: statsResult.totalPending }
-      : { totalSales: 0, totalReceived: 0, totalPending: 0 };
+      const stats = statsResult
+        ? { totalSales: statsResult.totalSales, totalReceived: statsResult.totalReceived, totalPending: statsResult.totalPending }
+        : { totalSales: 0, totalReceived: 0, totalPending: 0 };
 
-    const response = { invoices, stats };
-
-    try {
-      await redis.set(cacheKey, response, { ex: 300 });
-      console.log("Redis Cache Miss: invoices. Cached result.");
-    } catch (redisError) {
-      console.error("Redis Set Error (invoices):", redisError.message);
-    }
+      return { invoices, stats };
+    });
 
     res.json(response);
   } catch (error) {
@@ -233,68 +219,7 @@ export const sendSalesReport = async (req, res) => {
     }
 
 
-    const htmlContent = `
-      <html>
-        <head>
-          <style>
-            body { font-family: 'Helvetica', sans-serif; padding: 20px; color: #333; }
-            h1 { text-align: center; color: #4f46e5; margin-bottom: 5px; }
-            p.date { text-align: center; color: #666; font-size: 12px; margin-bottom: 30px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; font-size: 12px; }
-            th { background-color: #f3f4f6; color: #374151; font-weight: 600; }
-            tr:nth-child(even) { background-color: #f9fafb; }
-            .total-row { font-weight: bold; background-color: #eef2ff; }
-            .summary-box { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 15px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; }
-            .summary-item { text-align: center; }
-            .summary-val { font-size: 18px; font-weight: bold; color: #111827; display: block; margin-top: 5px; }
-            .text-green { color: #10b981; }
-            .text-red { color: #ef4444; }
-          </style>
-        </head>
-        <body>
-          <h1>Sales Report</h1>
-          <p class="date">Generated on: ${new Date().toLocaleString()}</p>
-          <p class="date">Period: ${periodLabel}</p>
-          <div class="summary-box">
-            <div class="summary-item">Total Sales<span class="summary-val">₹${totalSales.toLocaleString('en-IN')}</span></div>
-            <div class="summary-item">Received<span class="summary-val text-green">₹${totalPaid.toLocaleString('en-IN')}</span></div>
-            <div class="summary-item">Pending<span class="summary-val text-red">₹${totalUnpaid.toLocaleString('en-IN')}</span></div>
-          </div>
-          <h3>📑 Detailed Transactions</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Invoice ID</th><th>Date</th><th>Customer</th><th>Status</th>
-                <th style="text-align: right;">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${reportInvoices.map(inv => `
-                <tr>
-                  <td>${inv.invoiceId}</td>
-                  <td>${new Date(inv.createdAt).toLocaleDateString()}</td>
-                  <td>${inv.customerName}</td>
-                  <td style="color: ${inv.paymentStatus === 'Paid' ? '#10b981' : '#ef4444'}">${inv.paymentStatus}</td>
-                  <td style="text-align: right;">₹${inv.grandTotal.toLocaleString('en-IN')}</td>
-                </tr>
-              `).join("")}
-              <tr class="total-row">
-                <td colspan="4" style="text-align: right;">Total</td>
-                <td style="text-align: right;">₹${totalSales.toLocaleString('en-IN')}</td>
-              </tr>
-            </tbody>
-          </table>
-          <p style="margin-top: 30px; font-size: 11px; color: #888; text-align: center;">End of Report</p>
-        </body>
-      </html>
-    `;
-
-    const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox", "--disable-setuid-sandbox"] });
-    const page = await browser.newPage();
-    await page.setContent(htmlContent);
-    const pdfBuffer = await page.pdf({ format: "A4" });
-    await browser.close();
+    const pdfBuffer = await generateSalesReportPdf(periodLabel, totalSales, totalPaid, totalUnpaid, reportInvoices);
 
     // Send in background
     sendEmailWithAttachment(
