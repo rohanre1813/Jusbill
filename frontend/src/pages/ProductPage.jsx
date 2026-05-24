@@ -189,8 +189,6 @@ export default function ProductPage() {
               </div>
             </div>
 
-            </div>
-
             <div className="flex items-center gap-2 mt-2">
               <input
                 type="checkbox"
