@@ -232,5 +232,200 @@ export const blogPosts = [
       <h2>Conclusion</h2>
       <p>Financial literacy is the ultimate superpower for a retail business owner. By constantly measuring your COGS, keeping overheads low, and tracking both purchases and sales digitally, you transition from running your business blindly to managing a highly structured, scalable, and profitable enterprise.</p>
     `
+  },
+  {
+    slug: "e-way-bills-explained",
+    title: "Navigating E-Way Bills: What Small Businesses Need to Know",
+    description: "Learn the rules surrounding E-Way bills under the GST regime, when they are required, and how to generate them easily.",
+    category: "GST & Tax",
+    readTime: "5 min read",
+    date: "May 20, 2026",
+    author: "Rohan Verma",
+    tags: ["E-Way Bill", "GST", "Transport", "Logistics"],
+    gradient: "from-blue-600 via-indigo-600 to-violet-700",
+    content: `
+      <h2>What is an E-Way Bill?</h2>
+      <p>An Electronic Way Bill (E-Way Bill) is a mandatory compliance mechanism under the GST regime for the movement of goods. It acts as a digital tracking document ensuring that the goods being transported comply with the GST laws and that no tax evasion occurs during transit.</p>
+      
+      <h2>When is it Required?</h2>
+      <p>An E-Way bill must be generated before the commencement of the movement of goods if the consignment value exceeds ₹50,000 (though some states have varying limits for intra-state movement). Whether the movement is for supply, return, or inward supply from an unregistered person, the rule applies uniformly.</p>
+
+      <h2>How to Generate an E-Way Bill</h2>
+      <p>Generating an E-Way bill is straightforward. Registered taxpayers or transporters can visit the national E-Way Bill portal, enter the invoice details, the HSN code of the goods, and the vehicle number. The portal generates a unique 12-digit E-Way Bill Number (EBN) which is shared with the supplier, recipient, and the transporter.</p>
+
+      <h2>Exceptions to the Rule</h2>
+      <p>Not all goods require an E-Way bill. Exempted goods like fresh milk, vegetables, meat, and unbranded flour do not need it. Additionally, if the goods are being transported by non-motorized conveyances, the E-Way bill is not mandatory.</p>
+
+      <h2>Conclusion</h2>
+      <p>Staying compliant with E-Way bill regulations ensures smooth transit of goods without the fear of confiscation or heavy penalties during spot checks by tax authorities.</p>
+    `
+  },
+  {
+    slug: "customer-retention-strategies",
+    title: "5 Customer Retention Strategies for Neighborhood Kirana Stores",
+    description: "Discover how simple strategies can turn one-time walk-ins into loyal, lifelong customers for your retail shop.",
+    category: "Kirana Tips",
+    readTime: "6 min read",
+    date: "May 22, 2026",
+    author: "Rohan Verma",
+    tags: ["Customer Loyalty", "Retail", "Marketing", "Kirana Store"],
+    gradient: "from-green-600 via-emerald-600 to-teal-700",
+    content: `
+      <h2>The Power of Customer Loyalty</h2>
+      <p>In the highly competitive world of retail, acquiring a new customer is often five times more expensive than retaining an existing one. For neighborhood Kirana stores, community trust and convenience are the biggest assets. Here are five strategies to boost retention.</p>
+      
+      <h2>1. Personalized Customer Service</h2>
+      <p>Unlike massive supermarkets, you have the advantage of knowing your customers by name. Remembering their regular purchases or asking about their family builds an emotional connection that corporate chains simply cannot replicate.</p>
+
+      <h2>2. Implement a Simple Loyalty Program</h2>
+      <p>You don't need a complex digital points system. A simple punch card or a digital tracking ledger where customers get a 5% discount after their 10th purchase encourages them to return to your shop rather than buying from a competitor.</p>
+
+      <h2>3. Home Delivery Options</h2>
+      <p>Convenience is king. Offering free local home delivery for orders above a certain threshold (e.g., ₹500) makes it incredibly easy for families to buy their monthly groceries from you instead of turning to quick-commerce apps.</p>
+
+      <h2>4. Flexible Credit (Khata) Management</h2>
+      <p>The traditional 'Khata' system is a unique retention tool. By offering short-term credit to trusted neighborhood families and managing it digitally to avoid disputes, you create a loyal customer base that relies on your flexibility.</p>
+
+      <h2>5. Keep the Store Clean and Organized</h2>
+      <p>A well-lit, clean, and organized store where products are easy to find creates a pleasant shopping experience. Regularly rotate stock, ensure aisles are clear, and clearly label prices to reduce friction.</p>
+
+      <h2>Conclusion</h2>
+      <p>Retention is all about making the customer feel valued and making their shopping experience as frictionless as possible. Implement these strategies and watch your community loyalty grow.</p>
+    `
+  },
+  {
+    slug: "b2b-ecommerce-future",
+    title: "The Future of B2B E-commerce for Wholesalers",
+    description: "How digital catalogs and WhatsApp ordering are replacing traditional sales visits and transforming B2B supply chains.",
+    category: "Tech & AI",
+    readTime: "7 min read",
+    date: "May 23, 2026",
+    author: "Rohan Verma",
+    tags: ["B2B", "E-commerce", "Wholesale", "Digital Supply Chain"],
+    gradient: "from-purple-600 via-violet-600 to-indigo-700",
+    content: `
+      <h2>The Shift from Field Sales to Digital Orders</h2>
+      <p>For decades, B2B wholesale depended on field sales agents visiting retail shops, showing physical catalogs, and writing down orders on notepads. This process is slow, prone to errors, and highly inefficient. Today, B2B e-commerce is transforming how distributors and retailers interact.</p>
+      
+      <h2>1. The Rise of the Digital Catalog</h2>
+      <p>Distributors are replacing printed booklets with live digital catalogs. Retailers can access a web portal or an app, see real-time stock availability, view bulk pricing tiers, and place orders instantly. This allows retailers to restock their shelves at 11 PM after their shop closes, without waiting for a sales rep.</p>
+
+      <h2>2. WhatsApp Commerce</h2>
+      <p>In India, WhatsApp is not just a messaging app; it is a primary business tool. B2B platforms are integrating conversational commerce, allowing retailers to text their orders or click through automated WhatsApp catalogs to replenish inventory seamlessly.</p>
+
+      <h2>3. Automated Credit Scoring</h2>
+      <p>Extending credit is risky. Modern B2B platforms use AI to analyze a retailer's past payment history, purchase frequency, and digital footprint to automatically calculate credit limits, reducing the risk of bad debt for the wholesaler.</p>
+
+      <h2>4. Faster Fulfillment</h2>
+      <p>With digital ordering, orders flow directly into the warehouse management system. Pickers can start assembling the order within minutes, dramatically reducing the turnaround time from order placement to shop delivery.</p>
+
+      <h2>Conclusion</h2>
+      <p>The future of wholesale is digital. Distributors who fail to provide an easy, digital ordering experience will lose market share to those who offer transparency, speed, and 24/7 ordering convenience.</p>
+    `
+  },
+  {
+    slug: "avoiding-inventory-mistakes",
+    title: "Top 10 Inventory Mistakes Retailers Make (And How to Avoid Them)",
+    description: "Are you losing money to dead stock or stockouts? Learn the most common inventory errors and the best practices to fix them.",
+    category: "Inventory",
+    readTime: "8 min read",
+    date: "May 25, 2026",
+    author: "Rohan Verma",
+    tags: ["Inventory Management", "Retail Operations", "Loss Prevention", "Business Tips"],
+    gradient: "from-red-500 via-rose-500 to-pink-600",
+    content: `
+      <h2>The Cost of Bad Inventory Management</h2>
+      <p>Inventory is the physical manifestation of your capital. Managing it poorly means you are literally throwing cash away. Let's look at the most common mistakes retailers make and how to correct them.</p>
+      
+      <h2>1. Operating Without Software</h2>
+      <p>Relying on pen, paper, and memory to track hundreds of SKUs is a guaranteed way to fail. You must use digital inventory software (like JusBill) to track stock levels accurately.</p>
+
+      <h2>2. Ignoring the Par Level</h2>
+      <p>Failing to set minimum stock levels means you wait until a shelf is empty before reordering. Set automated low-stock alerts to ensure continuous availability.</p>
+
+      <h2>3. Poor Shelf Organization</h2>
+      <p>If your stockroom is a mess, employees will order new stock because they can't find the existing items. Label shelves clearly and keep the stockroom as organized as the front of the shop.</p>
+
+      <h2>4. Over-ordering for Discounts</h2>
+      <p>Suppliers often offer bulk discounts, tempting retailers to buy massive quantities. If the product takes a year to sell, the capital tied up and the risk of expiration completely negate the initial discount.</p>
+
+      <h2>5. Failing to Audit</h2>
+      <p>Digital systems are great, but they are only as good as the data entered. You must conduct regular physical cycle counts to catch theft, breakage, or entry errors.</p>
+
+      <h2>Conclusion</h2>
+      <p>Treat your inventory with the same strict controls as your bank account. Avoid these common pitfalls, and you will see an immediate improvement in your shop's profitability and cash flow.</p>
+    `
+  },
+  {
+    slug: "payment-gateways-compared",
+    title: "Comparing Payment Methods for Small Businesses in India",
+    description: "From UPI to Card POS machines, understand the pros, cons, and transaction fees of different payment methods to maximize your margins.",
+    category: "Payments",
+    readTime: "6 min read",
+    date: "May 26, 2026",
+    author: "Rohan Verma",
+    tags: ["Payments", "UPI", "POS", "Fintech", "Merchant Services"],
+    gradient: "from-yellow-500 via-amber-500 to-orange-600",
+    content: `
+      <h2>The Shift in Consumer Payment Preferences</h2>
+      <p>Cash is no longer king. Customers expect to pay digitally, and refusing digital payments means losing sales. However, not all digital payment methods are created equal. Let's compare the options available to Indian merchants.</p>
+      
+      <h2>1. UPI (Unified Payments Interface)</h2>
+      <p><strong>Pros:</strong> Zero transaction fees (MDR), instant settlement to your bank account, and universally adopted by consumers.<br>
+      <strong>Cons:</strong> Requires the customer to have a smartphone and active internet.</p>
+
+      <h2>2. Card POS (Point of Sale) Machines</h2>
+      <p><strong>Pros:</strong> Excellent for high-ticket items, supports credit cards and EMIs, and feels highly professional.<br>
+      <strong>Cons:</strong> Merchants pay an MDR ranging from 1% to 2.5% per transaction, plus monthly rental fees for the machine.</p>
+
+      <h2>3. Payment Gateways (for E-commerce)</h2>
+      <p><strong>Pros:</strong> Allows you to collect payments online securely via cards, net banking, and wallets.<br>
+      <strong>Cons:</strong> Setup can be technical, and standard gateway fees are around 2% per transaction.</p>
+
+      <h2>4. Mobile Wallets</h2>
+      <p><strong>Pros:</strong> Fast and convenient for small transactions.<br>
+      <strong>Cons:</strong> Transferring wallet balances to a bank account sometimes incurs a small fee, though UPI integration has largely solved this.</p>
+
+      <h2>The Optimal Strategy</h2>
+      <p>For most neighborhood shops and MSMEs, a prominent UPI QR code (like the one generated on JusBill invoices) should be the primary payment method to avoid fees. A Card POS machine should be kept as a backup for credit card users making large purchases.</p>
+    `
+  },
+  {
+    slug: "retail-shop-setup-guide",
+    title: "The Ultimate Checklist for Setting Up a Retail Shop in India",
+    description: "Starting a new shop? Follow this comprehensive guide covering everything from licenses and GST registration to selecting billing software.",
+    category: "Retail Tips",
+    readTime: "9 min read",
+    date: "May 27, 2026",
+    author: "Rohan Verma",
+    tags: ["Startup", "Retail Business", "Checklist", "Entrepreneurship"],
+    gradient: "from-cyan-600 via-teal-600 to-emerald-700",
+    content: `
+      <h2>Turning Your Dream into Reality</h2>
+      <p>Opening a retail shop is an exciting journey, but the administrative and logistical hurdles can be overwhelming. Missing a crucial license or choosing the wrong location can stall your launch. Use this checklist to ensure a smooth opening.</p>
+      
+      <h2>1. Market Research & Location</h2>
+      <p>Foot traffic is everything. Analyze the demographics of the neighborhood, the presence of competitors, and the visibility of the storefront. A slightly higher rent in a high-traffic area is often better than a cheap, hidden location.</p>
+
+      <h2>2. Legal & Licensing</h2>
+      <ul>
+        <li><strong>Shop & Establishment License:</strong> Mandatory for all commercial establishments.</li>
+        <li><strong>GST Registration:</strong> Mandatory if your annual turnover is expected to cross the threshold (usually ₹40 Lakhs for goods).</li>
+        <li><strong>FSSAI License:</strong> Required if you are selling any food items or beverages.</li>
+        <li><strong>Trade License:</strong> Issued by the local municipality.</li>
+      </ul>
+
+      <h2>3. Supplier Network</h2>
+      <p>Don't rely on a single supplier. Build relationships with multiple wholesalers to ensure you get the best margins and have backups if a supply chain gets disrupted.</p>
+
+      <h2>4. Store Layout & Fixtures</h2>
+      <p>Design your store flow. Place daily essentials at the back to force customers to walk past impulse-buy items. Invest in sturdy, adjustable shelving and excellent lighting.</p>
+
+      <h2>5. Technology & Billing</h2>
+      <p>Set up your tech stack from day one. You need a reliable computer or tablet, a barcode scanner, a thermal printer, and robust cloud-based software like JusBill to handle invoicing, inventory, and GST compliance.</p>
+
+      <h2>Conclusion</h2>
+      <p>Preparation prevents poor performance. By securing your licenses early and setting up a digital-first operational workflow, your grand opening will be stress-free and profitable.</p>
+    `
   }
 ];

@@ -25,6 +25,16 @@ export default function BlogPostPage() {
       navigate("/blog");
     } else {
       setPost(foundPost);
+      
+      // Dynamic SEO for AdSense bots
+      document.title = `${foundPost.title} | JusBill Blog`;
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.name = "description";
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.content = foundPost.description;
     }
     // Scroll to top on load
     window.scrollTo(0, 0);
