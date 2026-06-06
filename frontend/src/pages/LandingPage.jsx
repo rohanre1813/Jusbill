@@ -450,6 +450,16 @@ export default function LandingPage() {
                     Terms of Service
                   </Link>
                 </li>
+                <li>
+                  <Link to="/disclaimer" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
+                    Disclaimer
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/editorial-policy" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
+                    Editorial Policy
+                  </Link>
+                </li>
                 <li className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-900">
                   <Mail size={14} className="text-indigo-500 shrink-0" />
                   <a

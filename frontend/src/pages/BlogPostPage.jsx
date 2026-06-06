@@ -93,10 +93,12 @@ export default function BlogPostPage() {
           {/* Meta Info */}
           <div className="flex flex-wrap items-center gap-6 text-sm text-white/90 font-medium">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center font-bold text-xs uppercase text-indigo-100">
-                {post.author.split(" ").map(n => n[0]).join("")}
-              </div>
-              <span>{post.author}</span>
+              <Link to="/author/rohan-verma" className="flex items-center gap-2 hover:text-white hover:underline transition-all">
+                <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center font-bold text-xs uppercase text-indigo-100">
+                  {post.author.split(" ").map(n => n[0]).join("")}
+                </div>
+                <span>{post.author}</span>
+              </Link>
             </div>
             <div className="h-4 w-px bg-white/30" />
             <div className="flex items-center gap-2">

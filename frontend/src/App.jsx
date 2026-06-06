@@ -11,6 +11,9 @@ import LandingPage from "./pages/LandingPage";
 import PublicInventoryPage from "./pages/PublicInventoryPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
+import DisclaimerPage from "./pages/DisclaimerPage";
+import EditorialPolicyPage from "./pages/EditorialPolicyPage";
+import AuthorPage from "./pages/AuthorPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import BlogPage from "./pages/BlogPage";
@@ -55,6 +58,9 @@ function AnimatedRoutes() {
       <Route path="/blog/:slug" element={<Layout><BlogPostPage /></Layout>} />
       <Route path="/privacy-policy" element={<Layout><PrivacyPolicyPage /></Layout>} />
       <Route path="/terms-of-service" element={<Layout><TermsOfServicePage /></Layout>} />
+      <Route path="/disclaimer" element={<Layout><DisclaimerPage /></Layout>} />
+      <Route path="/editorial-policy" element={<Layout><EditorialPolicyPage /></Layout>} />
+      <Route path="/author/rohan-verma" element={<Layout><AuthorPage /></Layout>} />
 
       {/* Protected Routes - Layout stays mounted, only page content animates */}
       <Route element={<ProtectedRoute><LayoutWithAnimatedOutlet /></ProtectedRoute>}>

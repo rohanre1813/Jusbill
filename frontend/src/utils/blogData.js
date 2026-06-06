@@ -427,5 +427,312 @@ export const blogPosts = [
       <h2>Conclusion</h2>
       <p>Preparation prevents poor performance. By securing your licenses early and setting up a digital-first operational workflow, your grand opening will be stress-free and profitable.</p>
     `
+  },
+  {
+    slug: "gst-registration-ultimate-guide",
+    title: "The Ultimate Guide to GST Registration for New Indian Shops",
+    description: "A comprehensive, step-by-step walkthrough of the GST registration process, threshold limits, and mandatory documentation for MSMEs.",
+    category: "GST & Tax",
+    readTime: "12 min read",
+    date: "June 1, 2026",
+    author: "Rohan Verma",
+    tags: ["GST", "Tax Compliance", "Startup", "Legal"],
+    gradient: "from-blue-700 via-indigo-700 to-purple-800",
+    content: `
+      <h2>Introduction to GST Registration</h2>
+      <p>Starting a new business in India involves several regulatory steps, and obtaining a Goods and Services Tax (GST) registration is often the most critical. Understanding when you need it and how to get it can save you from severe penalties and business interruptions.</p>
+
+      <h2>1. Do You Actually Need GST Registration?</h2>
+      <p>Not every small shop needs to register immediately. The government has set specific aggregate turnover thresholds. As of the latest regulations, businesses dealing exclusively in goods must register if their annual turnover exceeds ₹40 Lakhs (₹20 Lakhs for special category states). Service providers must register if turnover exceeds ₹20 Lakhs (₹10 Lakhs in special category states).</p>
+      <p>However, voluntary registration is highly recommended if you plan to sell on e-commerce platforms like Amazon or Flipkart, or if you purchase goods from other states (inter-state supply), which makes registration mandatory regardless of turnover.</p>
+
+      <h2>2. Types of GST Registration</h2>
+      <p>Retailers must choose between two main schemes: the <strong>Regular Scheme</strong> and the <strong>Composition Scheme</strong>. The Composition Scheme is designed to reduce the compliance burden for small taxpayers (turnover under ₹1.5 Crore). Under this scheme, you pay a flat fixed percentage of turnover (e.g., 1% for traders) but cannot claim Input Tax Credit (ITC) or issue taxable invoices. The Regular Scheme requires monthly or quarterly filing but allows you to claim ITC on your purchases.</p>
+
+      <h2>3. Documents Required</h2>
+      <p>Gather the following documents before visiting the portal:</p>
+      <ul>
+        <li>PAN Card of the Business or Proprietor</li>
+        <li>Aadhaar Card of the Proprietor/Partners/Directors</li>
+        <li>Proof of Business Registration (Partnership deed, Incorporation certificate, etc.)</li>
+        <li>Identity and Address Proof of Promoters/Director with Photographs</li>
+        <li>Address Proof of the Place of Business (Electricity bill, Rent agreement, NOC from owner)</li>
+        <li>Bank Account Statement or Cancelled Cheque</li>
+        <li>Digital Signature (Class 2 or Class 3) for Companies and LLPs</li>
+      </ul>
+
+      <h2>4. The Step-by-Step Registration Process</h2>
+      <p>Registration is entirely online via the official GST portal (gst.gov.in).</p>
+      <h3>Part A: Generating TRN</h3>
+      <p>Click on 'New Registration' and fill in your PAN, mobile number, and email ID. An OTP will be sent to verify your contact details, generating a Temporary Reference Number (TRN).</p>
+      <h3>Part B: Filling the Application</h3>
+      <p>Log in using the TRN and fill out the detailed forms covering business details, promoters, principal place of business, and bank accounts. You will need to select the appropriate HSN/SAC codes for your top 5 goods or services.</p>
+      <h3>Verification</h3>
+      <p>Submit the application using Aadhaar authentication (OTP) or a Digital Signature Certificate (DSC). You will receive an Application Reference Number (ARN).</p>
+
+      <h2>5. Post-Registration Compliance</h2>
+      <p>Once your GSTIN is issued (usually within 7 working days if Aadhaar authentication is successful), you must immediately display your GST Registration Certificate at your place of business. You must also begin issuing GST-compliant invoices and maintain proper books of accounts. Using billing software like JusBill automates the generation of these compliant invoices.</p>
+
+      <h2>Conclusion</h2>
+      <p>While the process may seem daunting, GST registration legitimizes your business, allows you to claim input tax credits, and opens up broader B2B and e-commerce opportunities. Keep your documents organized and choose the scheme that best fits your business model.</p>
+    `
+  },
+  {
+    slug: "calculating-cogs-profitability",
+    title: "How to Calculate COGS to Maximize Retail Profitability",
+    description: "Stop guessing your profits. Learn exactly how to calculate Cost of Goods Sold (COGS) to understand your true margins.",
+    category: "Retail Tips",
+    readTime: "10 min read",
+    date: "June 2, 2026",
+    author: "Rohan Verma",
+    tags: ["Accounting", "COGS", "Profit Margin", "Finance"],
+    gradient: "from-green-700 via-emerald-700 to-teal-800",
+    content: `
+      <h2>The Danger of Revenue Illusion</h2>
+      <p>Many retailers look at the cash register at the end of the day and assume they made money. High revenue does not equal high profit. If you do not accurately calculate your Cost of Goods Sold (COGS), you might actually be losing money on every transaction without realizing it.</p>
+
+      <h2>What is COGS?</h2>
+      <p>Cost of Goods Sold (COGS) refers to the direct costs attributable to the production or purchasing of the goods sold in your shop. It includes the wholesale cost of the items, direct labor (if you manufacture), and freight or shipping costs to get the items to your store.</p>
+      <p>It does <strong>not</strong> include indirect expenses like rent, marketing, or general administrative staff salaries.</p>
+
+      <h2>The COGS Formula</h2>
+      <p>The standard accounting formula for COGS is:</p>
+      <p><strong>COGS = Beginning Inventory + Purchases During the Period - Ending Inventory</strong></p>
+
+      <h2>Step-by-Step Calculation</h2>
+      <h3>1. Determine Beginning Inventory</h3>
+      <p>This is the value of all the inventory you have in stock at the start of the period (e.g., the 1st of the month). This requires a physical count or accurate software tracking.</p>
+      <h3>2. Add Purchases</h3>
+      <p>Total the cost of all inventory you bought during the month. Include any freight or delivery charges you paid to get the goods. Deduct any returns or discounts given by your supplier.</p>
+      <h3>3. Determine Ending Inventory</h3>
+      <p>At the end of the month, conduct another inventory count. The value of the goods remaining is your ending inventory.</p>
+
+      <h2>Why COGS Matters for Profit Margins</h2>
+      <p>Once you have your COGS, you can calculate your Gross Profit:</p>
+      <p><strong>Gross Profit = Total Revenue - COGS</strong></p>
+      <p>If your COGS is too high compared to your revenue, your gross margin shrinks, leaving you with very little cash to cover rent and electricity. By knowing your COGS per item, you can identify which products are actually driving your profitability and which are dead weight.</p>
+
+      <h2>Using Software to Automate COGS</h2>
+      <p>Manually calculating COGS using the periodic inventory method is tedious and prone to errors. Modern inventory management software uses the perpetual inventory method, calculating the exact COGS in real-time the moment a sale is rung up at the register. This provides instant visibility into your daily profitability.</p>
+
+      <h2>Conclusion</h2>
+      <p>Mastering COGS is the first step toward financial literacy for any retail owner. It allows you to price your products correctly, negotiate better with suppliers, and focus your shelf space on high-margin items.</p>
+    `
+  },
+  {
+    slug: "step-by-step-kirana-inventory",
+    title: "The Step-by-Step Guide to Managing Kirana Inventory",
+    description: "A practical framework for organizing stock, preventing expiration, and ensuring your shelves are never empty of fast-moving goods.",
+    category: "Inventory",
+    readTime: "11 min read",
+    date: "June 3, 2026",
+    author: "Rohan Verma",
+    tags: ["Kirana Store", "Inventory Management", "FMCG", "Retail Operations"],
+    gradient: "from-orange-600 via-amber-600 to-yellow-700",
+    content: `
+      <h2>The Challenge of FMCG Inventory</h2>
+      <p>Managing a Kirana store means handling hundreds, if not thousands, of SKUs (Stock Keeping Units), many of which have strict expiration dates. Poor inventory management leads to two catastrophic outcomes: stockouts (losing customers to competitors) and dead stock (expired goods that destroy your capital).</p>
+
+      <h2>1. Implement the FIFO Method</h2>
+      <p>First-In, First-Out (FIFO) is non-negotiable for grocery and FMCG retail. When restocking shelves, new inventory must be placed <em>behind</em> older inventory. This ensures that the older products sell first, drastically reducing the amount of expired stock you have to throw away. Train your staff aggressively on this principle.</p>
+
+      <h2>2. Categorize with ABC Analysis</h2>
+      <p>Not all inventory is created equal. Use the ABC method to categorize your stock:</p>
+      <ul>
+        <li><strong>A Items:</strong> High value or high volume items that account for 80% of your revenue but only 20% of your stock (e.g., staple grains, popular dairy). These require daily monitoring and tight control.</li>
+        <li><strong>B Items:</strong> Moderate value and sales volume. Track these weekly.</li>
+        <li><strong>C Items:</strong> Low value, slow-moving items (e.g., specialty spices). Bulk order these less frequently to save on administrative time.</li>
+      </ul>
+
+      <h2>3. Establish Minimum Viable Stock (Par Levels)</h2>
+      <p>For every 'A' and 'B' item, establish a par level—the minimum amount of stock you must have on hand at all times. If your par level for 1L milk is 20 packets, the moment inventory drops to 20, an order must be placed. This prevents stockouts of daily essentials.</p>
+
+      <h2>4. Regular Cycle Counting</h2>
+      <p>Do not wait for an annual inventory audit. Implement cycle counting, where you physically count a small subset of your inventory every day or week. For example, count beverages on Monday, pulses on Tuesday, and snacks on Wednesday. This keeps your digital records constantly aligned with physical reality without disrupting business operations.</p>
+
+      <h2>5. Leverage Supplier Returns</h2>
+      <p>Negotiate "Return to Vendor" (RTV) agreements for slow-moving or near-expiry items. Many FMCG distributors will swap out unsold stock if you notify them 30-60 days before the expiration date. You must track expiration dates diligently to take advantage of this.</p>
+
+      <h2>Conclusion</h2>
+      <p>Effective Kirana inventory management is about discipline. By organizing your physical shelves correctly and maintaining accurate digital records, you optimize your cash flow and ensure customers always find what they are looking for.</p>
+    `
+  },
+  {
+    slug: "impact-of-digital-india-retail",
+    title: "The Impact of Digital India on Tier-2 and Tier-3 Retailers",
+    description: "How broadband penetration, UPI, and digital literacy are transforming the business landscape beyond the major metropolitan cities.",
+    category: "Tech & AI",
+    readTime: "9 min read",
+    date: "June 4, 2026",
+    author: "Rohan Verma",
+    tags: ["Digital India", "UPI", "E-commerce", "Economy"],
+    gradient: "from-cyan-700 via-blue-700 to-indigo-800",
+    content: `
+      <h2>The Digital Awakening Beyond Metros</h2>
+      <p>For years, technological adoption in Indian retail was heavily concentrated in Tier-1 cities like Mumbai, Bengaluru, and Delhi. However, the 'Digital India' initiative, coupled with affordable mobile data, has sparked a massive transformation in Tier-2 and Tier-3 cities, permanently altering how local retailers operate.</p>
+
+      <h2>1. The UPI Revolution</h2>
+      <p>The most visible impact is the ubiquity of the Unified Payments Interface (UPI). Even in remote towns, consumers now expect to pay via QR codes. Retailers who previously operated purely on a cash basis have adopted digital payments, resulting in less time counting cash, fewer issues with exact change, and a digital trail that helps them secure formal bank loans.</p>
+
+      <h2>2. Cloud-Based Software Adoption</h2>
+      <p>Historically, sophisticated billing software required expensive on-premise servers and IT maintenance. Today, retailers in small towns use lightweight, cloud-based applications (often accessed directly via smartphones or basic tablets) to manage inventory and generate GST invoices. This democratization of technology allows a small shop in a Tier-3 city to operate with the same efficiency as a modern supermarket chain.</p>
+
+      <h2>3. The Shift in B2B Sourcing</h2>
+      <p>Digital India has disrupted the traditional wholesale supply chain. Retailers are no longer completely dependent on local distributors. B2B e-commerce platforms allow shop owners in remote areas to browse digital catalogs, compare prices nationally, and order inventory directly from manufacturers via apps, bypassing multiple middlemen and improving their profit margins.</p>
+
+      <h2>4. Formalization of the Economy</h2>
+      <p>With digital payments and cloud billing comes economic formalization. As retailers digitize their sales data, they build a verifiable financial history. This data footprint allows fintech companies and banks to offer micro-loans and working capital credit based on actual sales volume rather than traditional, hard-to-acquire collateral.</p>
+
+      <h2>Conclusion</h2>
+      <p>The digital divide is closing rapidly. Retailers in Tier-2 and Tier-3 cities who embrace these digital tools are seeing faster growth, better margins, and easier access to capital. The future of Indian retail is unquestionably digital, regardless of geography.</p>
+    `
+  },
+  {
+    slug: "understanding-input-tax-credit",
+    title: "A Deep Dive into Input Tax Credit (ITC) Under GST",
+    description: "Maximize your tax savings by understanding how Input Tax Credit works, what you can claim, and common mistakes that lead to rejected claims.",
+    category: "GST & Tax",
+    readTime: "14 min read",
+    date: "June 5, 2026",
+    author: "Rohan Verma",
+    tags: ["GST", "Tax Compliance", "ITC", "Finance"],
+    gradient: "from-rose-700 via-pink-700 to-purple-800",
+    content: `
+      <h2>The Core Mechanism of GST</h2>
+      <p>Input Tax Credit (ITC) is the backbone of the Goods and Services Tax system. It is the mechanism designed to eliminate the "cascading effect" of taxes (paying tax on tax) by allowing businesses to reduce their tax liability on sales by the amount of tax they have already paid on purchases.</p>
+
+      <h2>How ITC Works (A Simple Example)</h2>
+      <p>Suppose you are a retailer selling electronics. You purchase a batch of smartphones from a wholesaler for ₹1,00,000 and pay an 18% GST of ₹18,000. Your total purchase cost is ₹1,18,000.</p>
+      <p>Later, you sell these smartphones to consumers for a total of ₹1,50,000. You collect 18% GST from the consumers, which equals ₹27,000.</p>
+      <p>Without ITC, you would owe the government ₹27,000. However, because you already paid ₹18,000 in tax when you bought the phones, you claim an Input Tax Credit for that amount. Your final tax payment to the government is: ₹27,000 (Output Tax) - ₹18,000 (Input Tax Credit) = ₹9,000.</p>
+
+      <h2>Conditions for Claiming ITC</h2>
+      <p>The government has strict rules to prevent fraudulent ITC claims. To claim ITC, you must satisfy the following conditions:</p>
+      <ul>
+        <li>You must be in possession of a valid tax invoice or debit note issued by a registered supplier.</li>
+        <li>You must have actually received the goods or services.</li>
+        <li>The tax charged on your purchase must have been actually paid to the government by your supplier (this is verified via GSTR-2B matching).</li>
+        <li>You must have filed your GST returns.</li>
+        <li>The goods or services must be used for the purpose of your business (not for personal consumption).</li>
+      </ul>
+
+      <h2>Blocked Credits (Section 17(5))</h2>
+      <p>Not all GST paid on business expenses can be claimed as ITC. Section 17(5) of the CGST Act lists specific "blocked credits." Common blocked items include:</p>
+      <ul>
+        <li>Motor vehicles for passenger transportation (with some exceptions like driving schools or taxi services).</li>
+        <li>Food, beverages, and outdoor catering for employees.</li>
+        <li>Membership of a club, health, or fitness center.</li>
+        <li>Goods given as free samples or gifts, or goods lost/stolen.</li>
+      </ul>
+
+      <h2>The Importance of Invoice Matching</h2>
+      <p>The biggest challenge for retailers is ensuring their suppliers file their returns correctly. If your supplier fails to upload the invoice in their GSTR-1, the invoice will not appear in your GSTR-2B, and you will be unable to claim the ITC, resulting in a direct financial loss. Using automated billing and reconciliation software is critical to identify defaulting suppliers.</p>
+
+      <h2>Conclusion</h2>
+      <p>Claiming ITC correctly requires meticulous record-keeping and diligent follow-up with suppliers. By strictly adhering to the rules and utilizing technology for invoice reconciliation, you can significantly reduce your tax burden and improve cash flow.</p>
+    `
+  },
+  {
+    slug: "customer-loyalty-programs-smes",
+    title: "Designing Profitable Customer Loyalty Programs for MSMEs",
+    description: "Learn how to build a loyalty program that actually increases customer lifetime value without destroying your profit margins.",
+    category: "Retail Tips",
+    readTime: "10 min read",
+    date: "June 6, 2026",
+    author: "Rohan Verma",
+    tags: ["Marketing", "Customer Retention", "Sales", "Retail Operations"],
+    gradient: "from-yellow-600 via-orange-600 to-red-700",
+    content: `
+      <h2>Beyond the Discount</h2>
+      <p>Many small business owners equate loyalty programs with giving away margin. They print punch cards that offer "Buy 10, Get 1 Free," resulting in customers only returning to claim the free item. A true loyalty program should change consumer behavior, increasing both the frequency of visits and the average order value.</p>
+
+      <h2>1. The Goal of a Loyalty Program</h2>
+      <p>Before designing the program, define your goal. Do you want customers to visit more often? Do you want them to spend more per visit? Or do you want to incentivize them to buy higher-margin product categories? The structure of your program must align with this goal.</p>
+
+      <h2>2. Tiered Reward Systems</h2>
+      <p>Instead of a flat discount, consider a tiered system that encourages higher spending. For example, a basic tier might offer 2% back in store credit, while customers who spend over ₹10,000 a month unlock a "Gold" tier offering 5% back and free home delivery. This gamifies the experience and gives customers a reason to consolidate all their purchases at your store rather than splitting them with competitors.</p>
+
+      <h2>3. Experiential Rewards</h2>
+      <p>Rewards do not always have to be monetary. For neighborhood shops, offering exclusive access or conveniences can be highly motivating. Consider rewards like "Skip the checkout line during Diwali," "First access to new specialty stock," or "Dedicated WhatsApp ordering line." These cost you very little but carry high perceived value.</p>
+
+      <h2>4. Partnering with Local Businesses</h2>
+      <p>Create a coalition loyalty program with non-competing businesses in your area. For instance, a grocery store could partner with a nearby dry cleaner and a pharmacy. Customers earn points across all three stores and can redeem them anywhere in the network. This cross-pollinates customer bases and strengthens the local business ecosystem.</p>
+
+      <h2>5. Leveraging Data</h2>
+      <p>A digital loyalty program (integrated with your billing software) provides invaluable data. You can track exactly what your most loyal customers are buying. Use this data to send targeted, personalized offers. If a loyalty member buys baby formula every two weeks, sending them a timely SMS offer for baby wipes will convert at a massive rate.</p>
+
+      <h2>Conclusion</h2>
+      <p>A successful loyalty program builds an emotional connection and makes it irrational for a customer to shop anywhere else. Keep the rules simple, make the rewards achievable, and use the data to continuously refine your offerings.</p>
+    `
+  },
+  {
+    slug: "preventing-retail-shrinkage",
+    title: "Mastering Loss Prevention: How to Stop Retail Shrinkage",
+    description: "From employee theft to vendor fraud, learn the primary causes of inventory shrinkage and the actionable steps to secure your stock.",
+    category: "Inventory",
+    readTime: "11 min read",
+    date: "June 7, 2026",
+    author: "Rohan Verma",
+    tags: ["Loss Prevention", "Security", "Inventory Management", "Retail"],
+    gradient: "from-slate-700 via-gray-700 to-zinc-800",
+    content: `
+      <h2>The Silent Profit Killer</h2>
+      <p>Retail shrinkage refers to the loss of inventory that occurs between the point of purchase from a supplier and the point of sale to a customer. If you have a net profit margin of 5%, every ₹1,000 of stolen or lost goods requires you to generate ₹20,000 in new sales just to break even. Controlling shrinkage is critical for survival.</p>
+
+      <h2>1. External Theft (Shoplifting)</h2>
+      <p>Shoplifting is the most visible form of shrinkage. To combat it:</p>
+      <ul>
+        <li><strong>Store Layout:</strong> Eliminate blind spots. Ensure high-value, small items (like cosmetics or razor blades) are placed near the checkout counter or behind glass.</li>
+        <li><strong>Customer Service:</strong> The best deterrent is attention. Greeting every customer as they enter signals that the staff is alert and watching.</li>
+        <li><strong>Surveillance:</strong> Install highly visible CCTV cameras and put up signage indicating that the premises are monitored.</li>
+      </ul>
+
+      <h2>2. Internal Theft (Employee Fraud)</h2>
+      <p>Unfortunately, a significant portion of shrinkage comes from within. Employees have access to both stock and cash registers. Prevent this by:</p>
+      <ul>
+        <li><strong>Strict Register Controls:</strong> Only authorized personnel should have access to the cash drawer. Use POS software that tracks every voided transaction, refund, and 'no-sale' drawer opening.</li>
+        <li><strong>Bag Checks:</strong> Implement a clear, fair, and consistent policy for checking employee bags at the end of their shifts.</li>
+        <li><strong>Separation of Duties:</strong> The person who counts the physical inventory should not be the same person who processes incoming deliveries from vendors.</li>
+      </ul>
+
+      <h2>3. Vendor Fraud</h2>
+      <p>Sometimes, delivery drivers or suppliers short-change shipments. Never allow a vendor to restock shelves independently without a staff member auditing the delivery. Count every box and verify against the purchase order and delivery challan before signing.</p>
+
+      <h2>4. Administrative Errors</h2>
+      <p>Not all shrinkage is malicious. Pricing mistakes, failing to record markdowns, or entering the wrong quantities into the inventory system cause 'paper shrinkage.' Regular cycle counting and utilizing barcode scanners at checkout drastically reduce these human errors.</p>
+
+      <h2>Conclusion</h2>
+      <p>You cannot manage what you do not measure. By implementing strict operational policies, utilizing modern POS software to track anomalies, and maintaining a culture of accountability, you can reduce shrinkage to acceptable minimums and protect your hard-earned margins.</p>
+    `
+  },
+  {
+    slug: "future-of-ai-in-retail-operations",
+    title: "How Artificial Intelligence is Reshaping Retail Operations",
+    description: "AI is no longer just for massive corporations. Discover how small retailers are using machine learning for demand forecasting and dynamic pricing.",
+    category: "Tech & AI",
+    readTime: "13 min read",
+    date: "June 8, 2026",
+    author: "Rohan Verma",
+    tags: ["Artificial Intelligence", "Technology", "Future of Retail", "Business Intelligence"],
+    gradient: "from-fuchsia-700 via-purple-700 to-violet-800",
+    content: `
+      <h2>The Democratization of AI</h2>
+      <p>Artificial Intelligence (AI) and Machine Learning (ML) were once buzzwords reserved for tech giants like Amazon and Walmart. Today, through cloud-based SaaS platforms, incredibly powerful predictive algorithms are accessible to neighborhood shops and MSMEs at a fraction of the cost.</p>
+
+      <h2>1. Predictive Demand Forecasting</h2>
+      <p>Traditional inventory ordering relies on a manager's intuition or basic historical averages. AI completely upends this. Machine learning models analyze years of historical sales data, local weather patterns, upcoming holidays, and even social media trends to predict exactly how much of a specific product will sell next week. This drastically reduces overstocking of perishable goods and prevents stockouts during sudden demand spikes.</p>
+
+      <h2>2. Dynamic Pricing</h2>
+      <p>E-commerce giants change their prices millions of times a day based on competitor pricing and demand. AI tools now allow offline retailers to implement similar strategies. Digital shelf labels linked to an AI backend can automatically adjust prices to optimize margins during peak hours or heavily discount perishable items approaching their expiration dates.</p>
+
+      <h2>3. Hyper-Personalized Marketing</h2>
+      <p>Generic SMS blasts are inefficient. AI analyzes individual customer purchase histories to generate hyper-personalized offers. If the AI detects that a customer usually buys dog food every three weeks, it can automatically send a customized discount code precisely when the customer is likely running out, increasing conversion rates dramatically.</p>
+
+      <h2>4. Automated Insights and Anomaly Detection</h2>
+      <p>Instead of manually pouring over Excel spreadsheets to find sales trends, AI acts as a virtual business analyst. The system can send automated alerts like: "Warning: Sales of Brand X detergent have dropped 30% this week compared to historical averages," allowing the store owner to immediately investigate shelf placement or competitor pricing.</p>
+
+      <h2>Conclusion</h2>
+      <p>Retailers who view AI as a threat risk obsolescence. Those who view it as an intelligent assistant will operate with a level of efficiency and foresight previously impossible. The integration of AI into daily retail operations is the ultimate competitive advantage for the modern MSME.</p>
+    `
   }
 ];
