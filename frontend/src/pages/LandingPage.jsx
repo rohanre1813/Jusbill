@@ -413,11 +413,7 @@ export default function LandingPage() {
                     Features
                   </a>
                 </li>
-                <li>
-                  <Link to="/blog" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
-                    Knowledge Hub (Blog)
-                  </Link>
-                </li>
+
                 <li>
                   <Link to="/about" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium">
                     About Us

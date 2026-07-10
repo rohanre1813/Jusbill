@@ -209,12 +209,7 @@ export default function AboutPage() {
                 <span>Create Free Account</span>
                 <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
-              <Link
-                to="/blog"
-                className="w-full sm:w-auto px-8 py-4 text-white hover:text-indigo-200 border border-white/20 hover:border-white/40 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl font-bold transition-colors"
-              >
-                Browse Business Guides
-              </Link>
+
             </div>
           </div>
         </div>

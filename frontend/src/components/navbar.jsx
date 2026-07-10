@@ -190,9 +190,7 @@ export default function Navbar() {
           </div>
         ) : (
           <div className="flex items-center gap-2 md:gap-4">
-            <Link to="/blog" className="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
-              Blog
-            </Link>
+
             <Link to="/about" className="inline-block text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-1.5 py-1">
               About
             </Link>
