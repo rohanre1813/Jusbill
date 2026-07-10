@@ -9,15 +9,8 @@ import ProfilePage from "./pages/ProfilePage";
 import ChatPage from "./pages/ChatPage";
 import LandingPage from "./pages/LandingPage";
 import PublicInventoryPage from "./pages/PublicInventoryPage";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
-import TermsOfServicePage from "./pages/TermsOfServicePage";
-import DisclaimerPage from "./pages/DisclaimerPage";
-import EditorialPolicyPage from "./pages/EditorialPolicyPage";
-import AuthorPage from "./pages/AuthorPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
-import BlogPage from "./pages/BlogPage";
-import BlogPostPage from "./pages/BlogPostPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Layout from "./components/Layout";
@@ -54,13 +47,6 @@ function AnimatedRoutes() {
       {/* Public Informational Routes - with Layout */}
       <Route path="/about" element={<Layout><AboutPage /></Layout>} />
       <Route path="/contact" element={<Layout><ContactPage /></Layout>} />
-      <Route path="/blog" element={<Layout><BlogPage /></Layout>} />
-      <Route path="/blog/:slug" element={<Layout><BlogPostPage /></Layout>} />
-      <Route path="/privacy-policy" element={<Layout><PrivacyPolicyPage /></Layout>} />
-      <Route path="/terms-of-service" element={<Layout><TermsOfServicePage /></Layout>} />
-      <Route path="/disclaimer" element={<Layout><DisclaimerPage /></Layout>} />
-      <Route path="/editorial-policy" element={<Layout><EditorialPolicyPage /></Layout>} />
-      <Route path="/author/rohan-verma" element={<Layout><AuthorPage /></Layout>} />
 
       {/* Protected Routes - Layout stays mounted, only page content animates */}
       <Route element={<ProtectedRoute><LayoutWithAnimatedOutlet /></ProtectedRoute>}>
