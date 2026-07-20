@@ -5,15 +5,50 @@ import Product from "../models/product.js";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "llama-3.1-8b-instant"; // Free, fast Llama 3.1 model
 
-// Fetch raw shop data for Groq summarization
+// Fetch shop data summaries for context
 const getShopContext = async (shopId) => {
   const [products, invoices, purchases] = await Promise.all([
-    Product.find({ shopId }).select("name price stock unit sold purchasePrice").lean(),
-    Invoice.find({ shopId }).sort({ createdAt: -1 }).limit(50).select("invoiceId customerName grandTotal paymentStatus createdAt").lean(),
-    Purchase.find({ shopId }).sort({ createdAt: -1 }).limit(50).select("purchaseId supplierName totalAmount createdAt").lean()
+    Product.find({ shopId }).select("name price stock unit sold purchasePrice"),
+    Invoice.find({ shopId }).sort({ createdAt: -1 }).limit(50).select("invoiceId customerName grandTotal paymentStatus createdAt"),
+    Purchase.find({ shopId }).sort({ createdAt: -1 }).limit(50).select("purchaseId supplierName totalAmount createdAt")
   ]);
 
-  return { products, invoices, purchases };
+  const productSummary = products.map(p =>
+    `${p.name}: Price ₹${p.price}, Stock ${p.stock} ${p.unit || "units"}, Sold ${p.sold || 0}, Purchase Price ₹${p.purchasePrice || 0}`
+  ).join("\n");
+
+  let totalSales = 0, totalPaid = 0, totalUnpaid = 0;
+  for (const inv of invoices) {
+    totalSales += inv.grandTotal || 0;
+    if (inv.paymentStatus === "Paid") totalPaid += inv.grandTotal || 0;
+    else totalUnpaid += inv.grandTotal || 0;
+  }
+
+  const paidInvoices = invoices.filter(inv => inv.paymentStatus === "Paid").slice(0, 15);
+  const unpaidInvoices = invoices.filter(inv => inv.paymentStatus !== "Paid").slice(0, 15);
+
+  const paidSummary = paidInvoices.map(inv =>
+    `${inv.invoiceId} | ${inv.customerName} | ₹${inv.grandTotal} | ${new Date(inv.createdAt).toLocaleDateString()}`
+  ).join("\n");
+
+  const unpaidSummary = unpaidInvoices.map(inv =>
+    `${inv.invoiceId} | ${inv.customerName} | ₹${inv.grandTotal} | ${new Date(inv.createdAt).toLocaleDateString()}`
+  ).join("\n");
+
+  let totalPurchases = 0;
+  for (const pur of purchases) totalPurchases += pur.totalAmount || 0;
+
+  const purchaseSummary = purchases.slice(0, 20).map(pur =>
+    `${pur.purchaseId} | ${pur.supplierName || "N/A"} | ₹${pur.totalAmount} | ${new Date(pur.createdAt).toLocaleDateString()}`
+  ).join("\n");
+
+  return {
+    totalProducts: products.length,
+    totalInvoices: invoices.length,
+    totalPurchaseRecords: purchases.length,
+    totalSales, totalPaid, totalUnpaid, totalPurchases,
+    productSummary, paidSummary, unpaidSummary, purchaseSummary
+  };
 };
 
 export const chat = async (req, res) => {
@@ -25,41 +60,30 @@ export const chat = async (req, res) => {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) return res.status(500).json({ message: "Groq API key not configured" });
 
-    const rawData = await getShopContext(req.user.shopId);
+    const data = await getShopContext(req.user.shopId);
 
-    // Call 1: Send raw JSON to Groq to calculate and summarize
-    const summaryResponse = await fetch(GROQ_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: [{
-          role: "system",
-          content: `You are an internal data analyzer. Analyze this JSON data for a business. Calculate total sales (sum of invoices grandTotal), total purchases, profit, and summarize top items. Provide a clear, concise text summary. Data: ${JSON.stringify(rawData)}`
-        }],
-        max_tokens: 700,
-        temperature: 0.1,
-        stream: false
-      })
-    });
-
-    if (!summaryResponse.ok) {
-      const error = await summaryResponse.text();
-      console.error("Groq Summary Error:", error);
-      return res.status(500).json({ message: "AI summarization error", error });
-    }
-
-    const summaryResult = await summaryResponse.json();
-    const dataSummary = summaryResult.choices?.[0]?.message?.content?.trim() || "No summary generated.";
-
-    // Call 2: Final response based on the generated summary
     const systemContent = `You are JusBill AI, a smart business assistant. Answer only questions about the shop's business data provided below. Be concise, use bullet points, and format currency in Indian Rupees (₹). Do not make up data. If you don't have enough data to answer, say so clearly.
 
 SHOP DATA SUMMARY:
-${dataSummary}`;
+- Total Products: ${data.totalProducts}
+- Total Sales: ₹${data.totalSales.toLocaleString("en-IN")}
+- Received (Paid): ₹${data.totalPaid.toLocaleString("en-IN")}
+- Pending (Unpaid): ₹${data.totalUnpaid.toLocaleString("en-IN")}
+- Total Purchases (Expenses): ₹${data.totalPurchases.toLocaleString("en-IN")}
+- Realized Profit (Based only on Money Received): ₹${(data.totalPaid - data.totalPurchases).toLocaleString("en-IN")}
+- Projected Profit (If all pending invoices get paid): ₹${(data.totalSales - data.totalPurchases).toLocaleString("en-IN")}
+
+PRODUCTS:
+${data.productSummary || "No products found."}
+
+RECENT PAID SALES (MONEY RECEIVED):
+${data.paidSummary || "No paid invoices found."}
+
+RECENT UNPAID SALES (PENDING PAYMENT):
+${data.unpaidSummary || "No pending invoices found."}
+
+RECENT PURCHASES:
+${data.purchaseSummary || "No purchases found."}`;
 
     // Build messages array
     const messages = [{ role: "system", content: systemContent }];
