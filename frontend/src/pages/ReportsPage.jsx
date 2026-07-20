@@ -155,11 +155,15 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
 
-  const [dateRange, setDateRange] = useState(() => ({
-    // Use account creation date from AuthContext (already loaded) as default from-date
-    startDate: user?.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : "",
-    endDate: new Date().toISOString().split('T')[0]
-  }));
+  const [dateRange, setDateRange] = useState(() => {
+    const fallbackStart = new Date();
+    fallbackStart.setDate(fallbackStart.getDate() - 30);
+    
+    return {
+      startDate: user?.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : fallbackStart.toISOString().split('T')[0],
+      endDate: new Date().toISOString().split('T')[0]
+    };
+  });
 
   useEffect(() => {
     loadData();

@@ -18,11 +18,15 @@ export default function ProductPage() {
   const [analyticsData, setAnalyticsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [dateRange, setDateRange] = useState(() => ({
-    // Use account creation date from AuthContext (already loaded) as default from-date
-    startDate: user?.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : "",
-    endDate: new Date().toISOString().split('T')[0]
-  }));
+  const [dateRange, setDateRange] = useState(() => {
+    const fallbackStart = new Date();
+    fallbackStart.setDate(fallbackStart.getDate() - 30);
+    
+    return {
+      startDate: user?.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : fallbackStart.toISOString().split('T')[0],
+      endDate: new Date().toISOString().split('T')[0]
+    };
+  });
 
   const [form, setForm] = useState({
     name: "",
