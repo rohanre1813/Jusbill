@@ -11,7 +11,6 @@ import customerRoutes from "./routes/customer.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import purchaseRoutes from "./routes/purchase.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
-import contactRoutes from "./routes/contact.routes.js";
 
 dotenv.config({ path: "./.env" });
 connectDB();
@@ -41,7 +40,6 @@ apiRouter.use("/customers", customerRoutes);
 apiRouter.use("/users", userRoutes);
 apiRouter.use("/purchases", purchaseRoutes);
 apiRouter.use("/chat", chatRoutes);
-apiRouter.use("/contact", contactRoutes);
 
 app.use("/api", apiRouter);
 
