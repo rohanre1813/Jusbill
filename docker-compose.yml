@@ -33,7 +33,6 @@ services:
   backend:
     build:
       context: ./backend
-      target: production
     container_name: jusbill-backend
     restart: always
     ports:
