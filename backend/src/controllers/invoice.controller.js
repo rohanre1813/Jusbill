@@ -5,9 +5,7 @@ import Counter from "../models/counter.js";
 import { sendEmailWithAttachment } from "../utils/emailService.js";
 import puppeteer from "puppeteer";
 import { redis, getKey } from "../config/redis.js";
-import { clearCache } from "../middleware/cache.js";
-import { generateSalesReportPdf } from "../utils/pdfGenerator.js";
-import { fetchWithCache } from "../utils/cacheHelper.js";
+
 
 export const createInvoice = async (req, res) => {
   try {
@@ -89,49 +87,55 @@ export const createInvoice = async (req, res) => {
 export const getInvoices = async (req, res) => {
   try {
     const { search: searchQuery } = req.query;
+    const cacheKey = getKey(`invoices:${req.user.shopId}:${searchQuery || "all"}`);
 
-    const response = await fetchWithCache(`invoices:${req.user.shopId}:${searchQuery || "all"}`, 300, async () => {
-      const query = { shopId: req.user.shopId };
+    // Step 1: Check Redis cache first
+    const cached = await redis.get(cacheKey).catch(() => null);
+    if (cached) return res.json(cached);
 
-      if (searchQuery) {
-        query.$or = [
-          { invoiceId: { $regex: searchQuery, $options: "i" } },
-          { customerName: { $regex: searchQuery, $options: "i" } }
-        ];
-      }
+    // Step 2: Cache miss — build query and fetch from DB
+    const query = { shopId: req.user.shopId };
+    if (searchQuery) {
+      query.$or = [
+        { invoiceId: { $regex: searchQuery, $options: "i" } },
+        { customerName: { $regex: searchQuery, $options: "i" } }
+      ];
+    }
 
-      // Run both queries in parallel — stats via aggregation (no large doc fetch)
-      const [invoices, [statsResult]] = await Promise.all([
-        Invoice.find(query).sort({ createdAt: -1 }),
-        Invoice.aggregate([
-          { $match: { shopId: req.user.shopId } },
-          {
-            $group: {
-              _id: null,
-              totalSales: { $sum: "$grandTotal" },
-              totalReceived: {
-                $sum: { $cond: [{ $eq: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
-              },
-              totalPending: {
-                $sum: { $cond: [{ $ne: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
-              }
+    const [invoices, [statsResult]] = await Promise.all([
+      Invoice.find(query).sort({ createdAt: -1 }),
+      Invoice.aggregate([
+        { $match: { shopId: req.user.shopId } },
+        {
+          $group: {
+            _id: null,
+            totalSales: { $sum: "$grandTotal" },
+            totalReceived: {
+              $sum: { $cond: [{ $eq: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
+            },
+            totalPending: {
+              $sum: { $cond: [{ $ne: ["$paymentStatus", "Paid"] }, "$grandTotal", 0] }
             }
           }
-        ])
-      ]);
+        }
+      ])
+    ]);
 
-      const stats = statsResult
-        ? { totalSales: statsResult.totalSales, totalReceived: statsResult.totalReceived, totalPending: statsResult.totalPending }
-        : { totalSales: 0, totalReceived: 0, totalPending: 0 };
+    const stats = statsResult
+      ? { totalSales: statsResult.totalSales, totalReceived: statsResult.totalReceived, totalPending: statsResult.totalPending }
+      : { totalSales: 0, totalReceived: 0, totalPending: 0 };
 
-      return { invoices, stats };
-    });
+    const response = { invoices, stats };
+
+    // Step 3: Save to cache for next time (5 minutes)
+    await redis.set(cacheKey, response, { ex: 300 }).catch(() => {});
 
     res.json(response);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch invoices" });
   }
 };
+
 
 export const updatePaymentStatus = async (req, res) => {
   try {

@@ -5,7 +5,6 @@ import { sendEmailWithAttachment } from "../utils/emailService.js";
 import { redis, getKey } from "../config/redis.js";
 import { clearCache } from "../middleware/cache.js";
 import { generatePurchaseReportPdf } from "../utils/pdfGenerator.js";
-import { fetchWithCache } from "../utils/cacheHelper.js";
 import Counter from "../models/counter.js";
 
 export const createPurchase = async (req, res) => {
@@ -51,14 +50,24 @@ export const createPurchase = async (req, res) => {
 
 export const getPurchases = async (req, res) => {
   try {
-    const purchases = await fetchWithCache(`purchases:${req.user.shopId}`, 3600, async () => {
-      return await Purchase.find({ shopId: req.user.shopId }).sort({ createdAt: -1 });
-    });
+    const cacheKey = getKey(`purchases:${req.user.shopId}`);
+
+    // Step 1: Check Redis cache first
+    const cached = await redis.get(cacheKey).catch(() => null);
+    if (cached) return res.json(cached);
+
+    // Step 2: Cache miss — fetch from DB
+    const purchases = await Purchase.find({ shopId: req.user.shopId }).sort({ createdAt: -1 });
+
+    // Step 3: Save to cache for next time (1 hour)
+    await redis.set(cacheKey, purchases, { ex: 3600 }).catch(() => {});
+
     res.json(purchases);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch purchases" });
   }
 };
+
 
 export const deletePurchase = async (req, res) => {
   try {
