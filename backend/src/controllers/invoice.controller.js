@@ -5,9 +5,12 @@ import Counter from "../models/counter.js";
 import { sendEmailWithAttachment } from "../utils/emailService.js";
 import puppeteer from "puppeteer";
 import { redis, getKey } from "../config/redis.js";
-
+import mongoose from "mongoose";
 
 export const createInvoice = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const { items, customerName } = req.body;
 
@@ -15,19 +18,15 @@ export const createInvoice = async (req, res) => {
     const finalItems = [];
 
     for (let item of items) {
-      const product = await Product.findById(item.productId);
+      const product = await Product.findOneAndUpdate(
+        { _id: item.productId, stock: { $gte: item.qty } },
+        { $inc: { stock: -item.qty, sold: item.qty } },
+        { new: true, session }
+      );
 
       if (!product) {
-        return res.status(404).json({ message: `Product not found: ${item.productId}` });
+        throw new Error(`Insufficient stock or product not found for ID: ${item.productId}`);
       }
-
-      if (product.stock < item.qty) {
-        return res.status(400).json({ message: `Insufficient stock for ${product.name}. Available: ${product.stock}` });
-      }
-
-      product.stock -= item.qty;
-      product.sold = (product.sold || 0) + item.qty;
-      await product.save();
 
       finalItems.push({
         productId: product._id,
@@ -49,12 +48,12 @@ export const createInvoice = async (req, res) => {
     const counter = await Counter.findOneAndUpdate(
       { shopId: req.user.shopId, type: "invoice" },
       { $inc: { seq: 1 } },
-      { new: true, upsert: true }
+      { new: true, upsert: true, session }
     );
 
     const invoiceId = `INV-${String(counter.seq).padStart(4, '0')}`;
 
-    const invoice = await Invoice.create({
+    const invoice = new Invoice({
       shopId: req.user.shopId,
       invoiceId,
       customerName,
@@ -73,6 +72,10 @@ export const createInvoice = async (req, res) => {
       grandTotal: subtotalAfterDiscount + gst
     });
 
+    await invoice.save({ session });
+
+    await session.commitTransaction();
+
     // Non-blocking cache invalidation
     clearCache(`invoices:${req.user.shopId}`).catch(() => {});
     clearCache(`products:${req.user.shopId}`).catch(() => {});
@@ -80,7 +83,10 @@ export const createInvoice = async (req, res) => {
 
     res.status(201).json(invoice);
   } catch (error) {
-    res.status(500).json({ message: "Failed to create invoice", error: error.message });
+    await session.abortTransaction();
+    res.status(400).json({ message: error.message || "Failed to create invoice" });
+  } finally {
+    session.endSession();
   }
 };
 
